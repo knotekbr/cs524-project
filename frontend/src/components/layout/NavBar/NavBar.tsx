@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AppBar from "@mui/material/AppBar";
@@ -11,6 +12,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import styled from "@mui/material/styles/styled";
 
+import { Link, useNavigate } from "react-router-dom";
+
 const ToolbarGroup = styled(Stack)(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
@@ -18,6 +21,8 @@ const ToolbarGroup = styled(Stack)(({ theme }) => ({
 }));
 
 export default function NavBar() {
+  const navigate = useNavigate();
+
   const [adminMenuAnchor, setAdminMenuAnchor] = useState<null | HTMLElement>(null);
   const adminMenuOpen = Boolean(adminMenuAnchor);
 
@@ -32,20 +37,26 @@ export default function NavBar() {
     <AppBar>
       <Toolbar>
         <ToolbarGroup>
-          <Typography variant="h5">Project ALEX</Typography>
-          <Button variant="contained">New Game</Button>
-          <Button variant="contained">Past Games</Button>
+          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+            <Typography variant="h5">Project ALEX</Typography>
+          </Link>
+          <Button variant="contained" onClick={() => navigate("play")}>
+            New Game
+          </Button>
+          <Button variant="contained" onClick={() => navigate("history")}>
+            Past Games
+          </Button>
           <Button variant="contained" onClick={openAdminMenu}>
             Admin
           </Button>
-          <Menu anchorEl={adminMenuAnchor} open={adminMenuOpen} onClose={closeAdminMenu}>
-            <MenuItem>Question Management</MenuItem>
-            <MenuItem>Game Management</MenuItem>
+          <Menu anchorEl={adminMenuAnchor} open={adminMenuOpen} onClick={closeAdminMenu} onClose={closeAdminMenu}>
+            <MenuItem onClick={() => navigate("admin/questions")}>Question Management</MenuItem>
+            <MenuItem onClick={() => navigate("admin/games")}>Game Management</MenuItem>
           </Menu>
         </ToolbarGroup>
         <ToolbarGroup>
-          <Typography>Brandon</Typography>
-          <IconButton color="inherit">
+          <Typography style={{ userSelect: "none" }}>Brandon</Typography>
+          <IconButton color="inherit" onClick={() => navigate("settings")}>
             <SettingsIcon />
           </IconButton>
           <IconButton color="inherit">

@@ -28,7 +28,8 @@
       "~pages/*": ["src/pages/*"],
       "~router": ["src/router/index"],
       "~themes": ["src/themes/index"],
-      "~types": ["src/types/index"]
+      "~types": ["src/types/index"],
+      "~app/*": ["src/*"]
     }
   },
   "include": ["src"],

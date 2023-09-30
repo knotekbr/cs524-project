@@ -1,6 +1,7 @@
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import styled from "@mui/material/styles/styled";
+
+import { Outlet } from "react-router-dom";
 
 import { NavBar } from "~components/layout/NavBar";
 
@@ -18,7 +19,7 @@ export default function App() {
     <Stack height="100vh" width="100vw">
       <NavBar />
       <MainContainer>
-        <Typography>Hello World</Typography>
+        <Outlet />
       </MainContainer>
     </Stack>
   );

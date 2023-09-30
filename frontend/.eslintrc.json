@@ -2,7 +2,7 @@
   "root": true,
   "env": { "browser": true, "es2020": true },
   "extends": ["airbnb", "airbnb-typescript", "prettier"],
-  "plugins": ["react-refresh", "@typescript-eslint", "import", "prettier"],
+  "plugins": ["react-refresh", "@typescript-eslint", "mui-path-imports", "import", "prettier"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -24,31 +24,15 @@
       "error",
       {
         "newlines-between": "always",
-        "groups": [
-          "builtin",
-          "external",
-          ["internal", "index", "parent", "sibling"],
-          "object",
-          "type"
-        ],
+        "groups": ["builtin", "external", ["internal", "index", "parent", "sibling"], "object", "type"],
         "pathGroups": [
           {
-            "pattern": "react",
+            "pattern": "{react,react/**,react-dom,react-dom/**}",
             "group": "external",
             "position": "before"
           },
           {
-            "pattern": "react/**",
-            "group": "external",
-            "position": "before"
-          },
-          {
-            "pattern": "react-dom",
-            "group": "external",
-            "position": "before"
-          },
-          {
-            "pattern": "react-dom/**",
+            "pattern": "@mui/**",
             "group": "external",
             "position": "before"
           },
@@ -63,14 +47,15 @@
             "position": "before"
           }
         ],
-        "distinctGroup": false,
-        "pathGroupsExcludedImportTypes": ["react", "react-dom", "~**"],
+        "distinctGroup": true,
+        "pathGroupsExcludedImportTypes": ["react", "react-dom", "@mui", "~"],
         "alphabetize": {
           "order": "asc"
         }
       }
     ],
     "import/prefer-default-export": "off",
+    "mui-path-imports/mui-path-imports": "error",
     "no-plusplus": "off",
     "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
     "no-underscore-dangle": "off",
