@@ -1,0 +1,16 @@
+{
+  "prettier.enable": true,
+  "eslint.enable": true,
+  "eslint.run": "onType",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "editor.detectIndentation": false,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2
+}

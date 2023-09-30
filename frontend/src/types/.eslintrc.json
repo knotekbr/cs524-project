@@ -1,0 +1,6 @@
+{
+  "rules": {
+    /* With this enabled, barreled type re-exports are flagged as invalid */
+    "import/export": "off"
+  }
+}

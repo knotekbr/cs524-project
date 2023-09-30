@@ -1,0 +1,83 @@
+{
+  "root": true,
+  "env": { "browser": true, "es2020": true },
+  "extends": ["airbnb", "airbnb-typescript", "prettier"],
+  "plugins": ["react-refresh", "@typescript-eslint", "import", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": true,
+    "tsconfigRootDir": "."
+  },
+  "rules": {
+    "@typescript-eslint/no-shadow": "off",
+    "arrow-body-style": "off",
+    "class-methods-use-this": "off",
+    "import/extensions": [0, "never"],
+    "import/no-absolute-path": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      { "devDependencies": ["**/*.config.*", "**/*.spec.*", "**/*.test.*", "**/stories/**/*"] }
+    ],
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "groups": [
+          "builtin",
+          "external",
+          ["internal", "index", "parent", "sibling"],
+          "object",
+          "type"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "react/**",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "react-dom",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "react-dom/**",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "~types",
+            "group": "type",
+            "position": "before"
+          },
+          {
+            "pattern": "~**",
+            "group": "internal",
+            "position": "before"
+          }
+        ],
+        "distinctGroup": false,
+        "pathGroupsExcludedImportTypes": ["react", "react-dom", "~**"],
+        "alphabetize": {
+          "order": "asc"
+        }
+      }
+    ],
+    "import/prefer-default-export": "off",
+    "no-plusplus": "off",
+    "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
+    "no-underscore-dangle": "off",
+    "no-useless-constructor": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".jsx", ".tsx"] }],
+    "react/jsx-props-no-spreading": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/require-default-props": "off"
+  }
+}
