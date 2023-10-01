@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import App from "~app/App";
+import { AdminBasePage } from "~pages/admin/AdminBasePage";
 import { ManageGamesPage } from "~pages/admin/ManageGamesPage";
 import { ManageQuestionsPage } from "~pages/admin/ManageQuestionsPage";
 import { ErrorPage } from "~pages/general/ErrorPage";
@@ -11,8 +12,8 @@ import { HistoryLandingPage } from "~pages/history/HistoryLandingPage";
 import { ReviewGamePage } from "~pages/history/ReviewGamePage";
 import { CreateGamePage } from "~pages/play/CreateGamePage";
 import { JoinGamePage } from "~pages/play/JoinGamePage";
+import { PlayBasePage } from "~pages/play/PlayBasePage";
 import { PlayGamePage } from "~pages/play/PlayGamePage";
-import { PlayLandingPage } from "~pages/play/PlayLandingPage";
 
 export const router = createBrowserRouter([
   {
@@ -28,10 +29,11 @@ export const router = createBrowserRouter([
           },
           {
             path: "play",
+            element: <PlayBasePage />,
             children: [
               {
                 index: true,
-                element: <PlayLandingPage />,
+                element: <Navigate to="new" />,
               },
               {
                 path: "new",
@@ -41,11 +43,11 @@ export const router = createBrowserRouter([
                 path: "join",
                 element: <JoinGamePage />,
               },
-              {
-                path: ":gameId",
-                element: <PlayGamePage />,
-              },
             ],
+          },
+          {
+            path: "play/:gameId",
+            element: <PlayGamePage />,
           },
           {
             path: "history",
@@ -66,6 +68,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "admin",
+            element: <AdminBasePage />,
             children: [
               {
                 index: true,

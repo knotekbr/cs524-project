@@ -1,11 +1,14 @@
 import Typography from "@mui/material/Typography";
 
+import { Outlet } from "react-router-dom";
+
 import { PageWrapper } from "~components/layout/PageWrapper";
 
-export default function PlayLandingPage() {
+export default function AdminBasePage() {
   return (
     <PageWrapper>
-      <Typography>Play - Home</Typography>
+      <Typography>Admin - Wrapper</Typography>
+      <Outlet />
     </PageWrapper>
   );
 }
