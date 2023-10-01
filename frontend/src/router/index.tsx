@@ -4,6 +4,8 @@ import App from "~app/App";
 import { AdminBasePage } from "~pages/admin/AdminBasePage";
 import { ManageGamesPage } from "~pages/admin/ManageGamesPage";
 import { ManageQuestionsPage } from "~pages/admin/ManageQuestionsPage";
+import { LogInPage } from "~pages/auth/LogInPage";
+import { SignUpPage } from "~pages/auth/SignUpPage";
 import { ErrorPage } from "~pages/general/ErrorPage";
 import { HomePage } from "~pages/general/HomePage";
 import { NotFoundPage } from "~pages/general/NotFoundPage";
@@ -26,6 +28,14 @@ export const router = createBrowserRouter([
           {
             index: true,
             element: <HomePage />,
+          },
+          {
+            path: "login",
+            element: <LogInPage />,
+          },
+          {
+            path: "signup",
+            element: <SignUpPage />,
           },
           {
             path: "play",
