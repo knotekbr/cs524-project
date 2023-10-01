@@ -4,7 +4,7 @@ import { PageWrapper } from "~components/layout/PageWrapper";
 
 export default function JoinGamePage() {
   return (
-    <PageWrapper>
+    <PageWrapper nested>
       <Typography>Play - Join Game</Typography>
     </PageWrapper>
   );

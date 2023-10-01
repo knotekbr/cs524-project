@@ -4,7 +4,7 @@ import { PageWrapper } from "~components/layout/PageWrapper";
 
 export default function ManageQuestionsPage() {
   return (
-    <PageWrapper>
+    <PageWrapper nested>
       <Typography>Admin - Question Management</Typography>
     </PageWrapper>
   );

@@ -15,7 +15,7 @@ export const lightTheme = createTheme({
       main: "#d69f4c",
     },
     background: {
-      default: "#F5F5F5",
+      default: "#e5edff",
     },
   },
   typography: () => ({

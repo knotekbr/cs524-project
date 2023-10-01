@@ -4,6 +4,7 @@ import styled from "@mui/material/styles/styled";
 import type { PageWrapperProps } from "./PageWrapper.types";
 
 const RootContainer = styled(Stack)(({ theme }) => ({
+  paddingBlock: theme.spacing(2),
   [theme.breakpoints.up("lg")]: {
     width: theme.breakpoints.values.lg,
     marginInline: "auto",
