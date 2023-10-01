@@ -1,8 +1,18 @@
-import Typography from "@mui/material/Typography";
-
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import App from "~app/App";
+import { ManageGamesPage } from "~pages/admin/ManageGamesPage";
+import { ManageQuestionsPage } from "~pages/admin/ManageQuestionsPage";
+import { ErrorPage } from "~pages/general/ErrorPage";
+import { HomePage } from "~pages/general/HomePage";
+import { NotFoundPage } from "~pages/general/NotFoundPage";
+import { SettingsPage } from "~pages/general/SettingsPage";
+import { HistoryLandingPage } from "~pages/history/HistoryLandingPage";
+import { ReviewGamePage } from "~pages/history/ReviewGamePage";
+import { CreateGamePage } from "~pages/play/CreateGamePage";
+import { JoinGamePage } from "~pages/play/JoinGamePage";
+import { PlayGamePage } from "~pages/play/PlayGamePage";
+import { PlayLandingPage } from "~pages/play/PlayLandingPage";
 
 export const router = createBrowserRouter([
   {
@@ -10,23 +20,49 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        errorElement: <Typography>Error</Typography>,
+        errorElement: <ErrorPage />,
         children: [
           {
             index: true,
-            element: <Typography>Home</Typography>,
+            element: <HomePage />,
           },
           {
             path: "play",
-            element: <Typography>Play Game</Typography>,
+            children: [
+              {
+                index: true,
+                element: <PlayLandingPage />,
+              },
+              {
+                path: "new",
+                element: <CreateGamePage />,
+              },
+              {
+                path: "join",
+                element: <JoinGamePage />,
+              },
+              {
+                path: ":gameId",
+                element: <PlayGamePage />,
+              },
+            ],
           },
           {
             path: "history",
-            element: <Typography>Game History</Typography>,
+            children: [
+              {
+                index: true,
+                element: <HistoryLandingPage />,
+              },
+              {
+                path: ":gameId",
+                element: <ReviewGamePage />,
+              },
+            ],
           },
           {
             path: "settings",
-            element: <Typography>Settings</Typography>,
+            element: <SettingsPage />,
           },
           {
             path: "admin",
@@ -37,17 +73,17 @@ export const router = createBrowserRouter([
               },
               {
                 path: "questions",
-                element: <Typography>Admin - Question Management</Typography>,
+                element: <ManageQuestionsPage />,
               },
               {
                 path: "games",
-                element: <Typography>Admin - Game Management</Typography>,
+                element: <ManageGamesPage />,
               },
             ],
           },
           {
             path: "*",
-            element: <Typography>Page not found</Typography>,
+            element: <NotFoundPage />,
           },
         ],
       },
