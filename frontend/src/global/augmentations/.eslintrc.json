@@ -1,0 +1,6 @@
+{
+  "rules": {
+    /* Augmented interfaces must be in file scope, but will technically be unused */
+    "@typescript-eslint/no-unused-vars": "off"
+  }
+}
