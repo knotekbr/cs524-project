@@ -1,11 +1,19 @@
-import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 
+import { CategoryColumn } from "~components/game/CategoryColumn";
 import { PageWrapper } from "~components/layout/PageWrapper";
 
 export default function PlayGamePage() {
   return (
     <PageWrapper>
-      <Typography>Play - Game</Typography>
+      <Stack direction="row" gap={1} bgcolor="black" p={1}>
+        <CategoryColumn categoryName="Test" answersAvailable={[true, true, true, true, true]} />
+        <CategoryColumn categoryName="Test" answersAvailable={[true, true, true, true, true]} />
+        <CategoryColumn categoryName="Test" answersAvailable={[true, true, true, true, true]} />
+        <CategoryColumn categoryName="Test" answersAvailable={[true, true, true, true, true]} />
+        <CategoryColumn categoryName="Test" answersAvailable={[true, true, true, true, true]} />
+        <CategoryColumn categoryName="Test" answersAvailable={[true, true, true, true, true]} />
+      </Stack>
     </PageWrapper>
   );
 }
