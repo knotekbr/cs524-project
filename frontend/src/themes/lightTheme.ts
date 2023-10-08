@@ -18,10 +18,21 @@ export const lightTheme = createTheme({
       default: "#e5edff",
     },
   },
-  typography: () => ({
+  typography: (palette) => ({
     fontFamily,
     allVariants: {
       fontFamily,
+    },
+    categoryAnswer: {
+      fontSize: "2vw",
+      fontWeight: "bold",
+      color: palette.secondary.main,
+      textShadow: "2px 2px black",
+    },
+    categoryName: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: "white",
     },
   }),
   components: {
