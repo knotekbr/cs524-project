@@ -73,6 +73,12 @@ export const lightTheme = createTheme({
         },
       ],
     },
+    MuiTextField: {
+      defaultProps: {
+        variant: "standard",
+        fullWidth: true,
+      },
+    },
     MuiToolbar: {
       styleOverrides: {
         root: ({ theme }) => ({
