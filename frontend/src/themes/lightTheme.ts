@@ -26,6 +26,7 @@ export const lightTheme = createTheme({
     categoryAnswer: {
       fontSize: "2vw",
       fontWeight: "bold",
+      lineHeight: 1,
       color: palette.secondary.main,
       textShadow: "2px 2px black",
     },

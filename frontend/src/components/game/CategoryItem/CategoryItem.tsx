@@ -10,8 +10,9 @@ const ItemContainer = styled(Stack)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   alignItems: "center",
   justifyContent: "center",
-  aspectRatio: 2,
+  aspectRatio: 1.75,
   userSelect: "none",
+  textAlign: "center",
 }));
 
 export default function CategoryItem({ itemType, label, available, onClick }: CategoryItemProps) {
