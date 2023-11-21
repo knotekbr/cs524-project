@@ -6,6 +6,14 @@
   ],
   "scripts": {
     "frontend": "yarn workspace @cs524-project/frontend",
-    "backend": "yarn workspace @cs524-project/backend"
+    "backend": "yarn workspace @cs524-project/backend",
+    "db:migrate": "yarn backend prisma migrate dev",
+    "db:generate": "yarn backend prisma generate",
+    "db:seed": "yarn backend prisma db seed",
+    "db:init": "yarn backend prisma migrate reset",
+    "dev": "concurrently \"yarn backend dev\" \"yarn frontend dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
