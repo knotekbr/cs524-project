@@ -3,5 +3,9 @@
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "scripts": {
+    "frontend": "yarn workspace @cs524-project/frontend",
+    "backend": "yarn workspace @cs524-project/backend"
+  }
 }
