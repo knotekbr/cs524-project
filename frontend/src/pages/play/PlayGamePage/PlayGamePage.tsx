@@ -2,9 +2,51 @@ import { useEffect, useRef, useState } from "react";
 
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { styled } from "@mui/material/styles";
 
-import { CategoryColumn } from "~components/game/CategoryColumn";
+import type { GameState } from "~types";
+
+import { GameBoard } from "~components/game/GameBoard";
 import { PageWrapper } from "~components/layout/PageWrapper";
+
+const PlayerRow = styled(Stack)(({ theme }) => ({
+  flexDirection: "row",
+  justifyContent: "space-between",
+  color: theme.palette.secondary.main,
+}));
+
+const MultipleChoiceAnswer = styled(Stack)(({ theme }) => ({
+  width: "75%",
+  height: "33%",
+  justifyContent: "center",
+  alignItems: "center",
+  textAlign: "center",
+  fontSize: 24,
+  backgroundColor: theme.palette.primary.main,
+  "& *": {
+    fontSize: "inherit",
+  },
+}));
+
+const gameState: GameState = {
+  categories: [
+    { categoryName: "Famous Names", answersAvailable: [true, true, true, true, true] },
+    { categoryName: "Data Types", answersAvailable: [true, true, true, true, true] },
+    { categoryName: "Web Frameworks", answersAvailable: [true, true, true, true, true] },
+    { categoryName: "Bits & Bytes", answersAvailable: [true, true, true, true, true] },
+    { categoryName: "Programming Languages", answersAvailable: [true, true, true, true, true] },
+    { categoryName: "Databases", answersAvailable: [true, true, true, true, true] },
+  ],
+  players: [
+    { id: 1, nickname: "Brandon", score: 200 },
+    { id: 2, nickname: "Jacob", score: 200 },
+    { id: 3, nickname: "Ragi", score: 200 },
+    { id: 4, nickname: "Remi", score: 200 },
+    { id: 5, nickname: "Vasuki", score: 200 },
+  ],
+  currentPlayerId: 1,
+  currentPlayerNickname: "Remi",
+};
 
 export default function PlayGamePage() {
   const gameBoardRef = useRef<HTMLDivElement | null>(null);
@@ -26,38 +68,17 @@ export default function PlayGamePage() {
       <Stack direction="row" gap={1.5} p={1} bgcolor="black">
         {answerMode === false ? (
           <>
-            <Stack direction="row" flex={5} gap={1} ref={gameBoardRef}>
-              <CategoryColumn categoryName="Famous Names" answersAvailable={[true, true, true, true, true]} />
-              <CategoryColumn categoryName="Data Types" answersAvailable={[true, true, true, true, true]} />
-              <CategoryColumn categoryName="Web Frameworks" answersAvailable={[true, true, true, true, true]} />
-              <CategoryColumn categoryName="Bits & Bytes" answersAvailable={[true, true, true, true, true]} />
-              <CategoryColumn categoryName="Programming Languages" answersAvailable={[true, true, true, true, true]} />
-              <CategoryColumn categoryName="Databases" answersAvailable={[true, true, true, true, true]} />
-            </Stack>
+            <GameBoard categories={gameState.categories} gameBoardRef={gameBoardRef} />
             {/* Everything below is placeholder to generate "mocks" */}
             <Stack flex={1} textAlign="center" gap={1}>
               <Stack flex={1} bgcolor="primary.main" p={1} onClick={() => setAnswerMode(!answerMode)}>
                 <Typography variant="categoryName">Players</Typography>
-                <Stack direction="row" justifyContent="space-between" color="secondary.main">
-                  <Typography>Brandon</Typography>
-                  <Typography>$200</Typography>
-                </Stack>
-                <Stack direction="row" justifyContent="space-between" color="secondary.main">
-                  <Typography>Jacob</Typography>
-                  <Typography>$200</Typography>
-                </Stack>
-                <Stack direction="row" justifyContent="space-between" color="secondary.main">
-                  <Typography>Ragi</Typography>
-                  <Typography>$200</Typography>
-                </Stack>
-                <Stack direction="row" justifyContent="space-between" color="secondary.main">
-                  <Typography>Remi</Typography>
-                  <Typography>$200</Typography>
-                </Stack>
-                <Stack direction="row" justifyContent="space-between" color="secondary.main">
-                  <Typography>Vasuki</Typography>
-                  <Typography>$200</Typography>
-                </Stack>
+                {gameState.players.map((player) => (
+                  <PlayerRow key={player.id}>
+                    <Typography>{player.nickname}</Typography>
+                    <Typography>{`$${player.score}`}</Typography>
+                  </PlayerRow>
+                ))}
               </Stack>
               <Stack bgcolor="primary.main" p={1}>
                 <Typography variant="categoryName">Remi&apos;s turn</Typography>
@@ -95,56 +116,20 @@ export default function PlayGamePage() {
             </Stack>
             <Stack direction="row" flex={1}>
               <Stack flex={1.5} alignItems="center" justifyContent="space-evenly">
-                <Stack
-                  width={0.75}
-                  height={0.25 * gameBoardHeight}
-                  justifyContent="center"
-                  alignItems="center"
-                  textAlign="center"
-                  bgcolor="primary.main"
-                >
-                  <Typography variant="categoryName" fontSize={24}>
-                    Integer
-                  </Typography>
-                </Stack>
-                <Stack
-                  width={0.75}
-                  height={0.25 * gameBoardHeight}
-                  justifyContent="center"
-                  alignItems="center"
-                  textAlign="center"
-                  bgcolor="primary.main"
-                >
-                  <Typography variant="categoryName" fontSize={24}>
-                    String
-                  </Typography>
-                </Stack>
+                <MultipleChoiceAnswer>
+                  <Typography variant="categoryName">Integer</Typography>
+                </MultipleChoiceAnswer>
+                <MultipleChoiceAnswer>
+                  <Typography variant="categoryName">String</Typography>
+                </MultipleChoiceAnswer>
               </Stack>
               <Stack flex={1.5} alignItems="center" justifyContent="space-evenly">
-                <Stack
-                  width={0.75}
-                  height={0.25 * gameBoardHeight}
-                  justifyContent="center"
-                  alignItems="center"
-                  textAlign="center"
-                  bgcolor="primary.main"
-                >
-                  <Typography variant="categoryName" fontSize={24}>
-                    Float
-                  </Typography>
-                </Stack>
-                <Stack
-                  width={0.75}
-                  height={0.25 * gameBoardHeight}
-                  justifyContent="center"
-                  alignItems="center"
-                  textAlign="center"
-                  bgcolor="primary.main"
-                >
-                  <Typography variant="categoryName" fontSize={24}>
-                    Array
-                  </Typography>
-                </Stack>
+                <MultipleChoiceAnswer>
+                  <Typography variant="categoryName">Float</Typography>
+                </MultipleChoiceAnswer>
+                <MultipleChoiceAnswer>
+                  <Typography variant="categoryName">Array</Typography>
+                </MultipleChoiceAnswer>
               </Stack>
               <Stack flex={1} gap={2}>
                 <Stack flex={1} justifyContent="center" alignItems="center" textAlign="center" bgcolor="primary.main">

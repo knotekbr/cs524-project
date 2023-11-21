@@ -1,3 +1,1 @@
-export type PlaceholderType = {
-  _: undefined;
-};
+export type * from "./gameplay";
