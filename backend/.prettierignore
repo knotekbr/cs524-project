@@ -1,0 +1,12 @@
+# Ignored directories
+.yarn
+coverage
+dist
+node_modules
+
+# Ignored files
+.eslintignore
+.gitignore
+.prettierignore
+.yarnrc.yml
+yarn.lock

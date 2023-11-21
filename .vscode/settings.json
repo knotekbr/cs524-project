@@ -2,6 +2,7 @@
   "prettier.enable": true,
   "eslint.enable": true,
   "eslint.run": "onType",
+  "eslint.workingDirectories": ["./backend", "./frontend"],
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
