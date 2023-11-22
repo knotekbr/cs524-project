@@ -8,8 +8,8 @@ import { Auth } from "src/common/decorators/auth.decorator";
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post("login")
+  @UseGuards(LocalAuthGuard)
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
