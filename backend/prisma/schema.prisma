@@ -27,6 +27,19 @@ model Game {
   createdById      Int
   players          GamePlayer[]
   events           GameEvent[]
+  invites          GameInvite[]
+  categories       GameCategory[]
+  status           GameStatus     @default(created)
+  createdAt        DateTime       @default(now())
+}
+
+model GameInvite {
+  game             Game           @relation(fields: [gameId], references: [id])
+  gameId           Int
+  invitedEmail     String
+  createdAt        DateTime       @default(now())
+
+  @@id([gameId, invitedEmail])
 }
 
 model GameEvent {
@@ -54,6 +67,7 @@ model AnswerCategory {
   id               Int            @id @default(autoincrement())
   categoryName     String
   answers          AnswerPrompt[]
+  associatedGames  GameCategory[]
 }
 
 model AnswerPrompt {
@@ -66,9 +80,25 @@ model AnswerPrompt {
   otherResponses   String[]
 }
 
+model GameCategory {
+  game             Game           @relation(fields: [gameId], references: [id])
+  gameId           Int
+  category         AnswerCategory @relation(fields: [categoryId], references: [id])
+  categoryId       Int
+
+  @@id([gameId, categoryId])
+}
+
 enum UserRole {
   user
   admin
+}
+
+enum GameStatus {
+  created
+  in_progress
+  paused
+  ended
 }
 
 enum GameEventType {
