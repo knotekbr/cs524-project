@@ -32,23 +32,28 @@
             "position": "before"
           },
           {
-            "pattern": "@mui/**",
+            "pattern": "{@mui,@mui/**}",
             "group": "external",
             "position": "before"
           },
           {
-            "pattern": "~types",
+            "pattern": "~{types,types/**}",
             "group": "type",
             "position": "before"
           },
           {
-            "pattern": "~**",
+            "pattern": "~{*,*/**}",
             "group": "internal",
             "position": "before"
+          },
+          {
+            "pattern": "/**",
+            "group": "sibling",
+            "position": "after"
           }
         ],
         "distinctGroup": true,
-        "pathGroupsExcludedImportTypes": ["react", "react-dom", "@mui", "~"],
+        "pathGroupsExcludedImportTypes": ["react", "react-dom", "@mui"],
         "alphabetize": {
           "order": "asc"
         }

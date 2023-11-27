@@ -23,10 +23,14 @@
     /* Path aliases */
     "baseUrl": ".",
     "paths": {
+      "~api": ["src/services/api/index"],
+      "~api/*": ["src/services/api/*"],
       "~assets/*": ["src/assets/*"],
       "~components/*": ["src/components/*"],
+      "~hooks/*": ["src/global/hooks/*"],
       "~pages/*": ["src/pages/*"],
       "~router": ["src/router/index"],
+      "~state/*": ["src/state/*"],
       "~themes": ["src/themes/index"],
       "~types": ["src/types/index"],
       "~app/*": ["src/*"]
