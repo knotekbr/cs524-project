@@ -1,0 +1,6 @@
+{
+  "rules": {
+    /* Param reassignment is a standard approach to updating state in redux state slices */
+    "no-param-reassign": "off"
+  }
+}
