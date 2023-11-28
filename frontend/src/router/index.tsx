@@ -1,6 +1,9 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import App from "~app/App";
+import { RouteAuthGuard } from "~components/auth/RouteAuthGuard";
+import { RouteRoleGuard } from "~components/auth/RouteRoleGuard";
+import { RouteUnauthGuard } from "~components/auth/RouteUnauthGuard";
 import { AdminBasePage } from "~pages/admin/AdminBasePage";
 import { ManageGamesPage } from "~pages/admin/ManageGamesPage";
 import { ManageQuestionsPage } from "~pages/admin/ManageQuestionsPage";
@@ -29,68 +32,89 @@ export const router = createBrowserRouter([
             index: true,
             element: <HomePage />,
           },
+
+          // Must be unauthenticated to access these routes
           {
-            path: "login",
-            element: <LogInPage />,
-          },
-          {
-            path: "signup",
-            element: <SignUpPage />,
-          },
-          {
-            path: "play",
-            element: <PlayBasePage />,
+            element: <RouteUnauthGuard />,
             children: [
               {
-                index: true,
-                element: <Navigate to="new" />,
+                path: "login",
+                element: <LogInPage />,
               },
               {
-                path: "new",
-                element: <CreateGamePage />,
-              },
-              {
-                path: "join",
-                element: <JoinGamePage />,
+                path: "signup",
+                element: <SignUpPage />,
               },
             ],
           },
+
+          // Must be authenticated to access these routes
           {
-            path: "play/:gameId",
-            element: <PlayGamePage />,
-          },
-          {
-            path: "history",
+            element: <RouteAuthGuard />,
             children: [
               {
-                index: true,
-                element: <HistoryLandingPage />,
+                path: "play",
+                element: <PlayBasePage />,
+                children: [
+                  {
+                    index: true,
+                    element: <Navigate to="new" />,
+                  },
+                  {
+                    path: "new",
+                    element: <CreateGamePage />,
+                  },
+                  {
+                    path: "join",
+                    element: <JoinGamePage />,
+                  },
+                ],
               },
               {
-                path: ":gameId",
-                element: <ReviewGamePage />,
+                path: "play/:gameId",
+                element: <PlayGamePage />,
+              },
+              {
+                path: "history",
+                children: [
+                  {
+                    index: true,
+                    element: <HistoryLandingPage />,
+                  },
+                  {
+                    path: ":gameId",
+                    element: <ReviewGamePage />,
+                  },
+                ],
+              },
+              {
+                path: "settings",
+                element: <SettingsPage />,
               },
             ],
           },
+
+          // Must be an admin to access these routes
           {
-            path: "settings",
-            element: <SettingsPage />,
-          },
-          {
-            path: "admin",
-            element: <AdminBasePage />,
+            element: <RouteRoleGuard roles={["admin"]} />,
             children: [
               {
-                index: true,
-                element: <Navigate to="questions" />,
-              },
-              {
-                path: "questions",
-                element: <ManageQuestionsPage />,
-              },
-              {
-                path: "games",
-                element: <ManageGamesPage />,
+                path: "admin",
+                element: <AdminBasePage />,
+                children: [
+                  {
+                    index: true,
+                    element: <Navigate to="questions" />,
+                  },
+                  {
+                    path: "questions",
+                    element: <ManageQuestionsPage />,
+                  },
+                  {
+                    path: "games",
+                    element: <ManageGamesPage />,
+                  },
+                ],
               },
             ],
           },

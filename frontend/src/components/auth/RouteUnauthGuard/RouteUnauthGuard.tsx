@@ -2,12 +2,12 @@ import { Navigate, Outlet } from "react-router-dom";
 
 import { useAuth } from "../AuthProvider";
 
-export default function RouteAuthGuard() {
+export default function RouteUnauthGuard() {
   const { isLoggedIn } = useAuth();
 
   if (isLoggedIn) {
-    return <Outlet />;
+    return <Navigate to="/" />;
   }
 
-  return <Navigate to="/" />;
+  return <Outlet />;
 }
