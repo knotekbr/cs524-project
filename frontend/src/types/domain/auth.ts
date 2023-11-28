@@ -26,3 +26,7 @@ export type CreateAccountDto = {
   password: string;
   nickname: string;
 };
+
+export type CreateAccountSchema = CreateAccountDto & {
+  confirmPassword: string;
+};
