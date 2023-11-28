@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { UsersService } from "src/users/users.service";
 import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-import add from "date-fns/add";
+import { add } from "date-fns";
 import { CreateAccountDto } from "./dtos/CreateAccountDto";
 
 @Injectable()
