@@ -8,6 +8,7 @@ import { Provider as ReduxProvider } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 
+import { AuthProvider } from "~components/auth/AuthProvider";
 import { FeedbackProvider } from "~components/utility/FeedbackProvider";
 import { router } from "~router";
 import { persistor, store } from "~state/store";
@@ -19,9 +20,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <PersistGate persistor={persistor} loading={null}>
         <ThemeProvider theme={lightTheme}>
           <CssBaseline />
-          <FeedbackProvider>
-            <RouterProvider router={router} />
-          </FeedbackProvider>
+          <AuthProvider>
+            <FeedbackProvider>
+              <RouterProvider router={router} />
+            </FeedbackProvider>
+          </AuthProvider>
         </ThemeProvider>
       </PersistGate>
     </ReduxProvider>
