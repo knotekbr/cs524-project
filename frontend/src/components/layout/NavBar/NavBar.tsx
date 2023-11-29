@@ -14,7 +14,7 @@ import { useAuth } from "~components/auth/AuthProvider";
 
 export default function NavBar() {
   const navigate = useNavigate();
-  const { isLoggedIn, user, logOut } = useAuth();
+  const { isLoggedIn, user, logOut, hasRole } = useAuth();
 
   return (
     <AppBar>
@@ -31,9 +31,11 @@ export default function NavBar() {
               <Button variant="navBar" onClick={() => navigate("history")}>
                 History
               </Button>
-              <Button variant="navBar" onClick={() => navigate("admin")}>
-                Admin
-              </Button>
+              {hasRole("admin") && (
+                <Button variant="navBar" onClick={() => navigate("admin")}>
+                  Admin
+                </Button>
+              )}
             </Stack>
             <Stack className="nav-bar-button-group">
               <Typography style={{ userSelect: "none" }}>{user.nickname}</Typography>
