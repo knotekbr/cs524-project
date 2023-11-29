@@ -10,13 +10,11 @@ const MainContainer = styled("main")({
   flexDirection: "column",
   flex: 1,
   width: "100%",
-  overflowX: "hidden",
-  overflowY: "auto",
 });
 
 export default function App() {
   return (
-    <Stack height="100vh" width="100vw">
+    <Stack minHeight="100vh" width="100%" sx={{ overflowY: "auto", overflowX: "hidden" }}>
       <NavBar />
       <MainContainer>
         <Outlet />
