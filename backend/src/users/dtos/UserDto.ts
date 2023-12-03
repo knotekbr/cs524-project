@@ -6,4 +6,5 @@ export class UserDto {
   nickname: string;
   role: UserRole;
   joined: Date;
+  activeGameId: number | null;
 }

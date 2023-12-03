@@ -83,20 +83,12 @@ export class GameInvitesController {
       throw new NotFoundException();
     }
 
-    return this.gamesService.update({
+    this.gamesService.update({
       where: {
         id,
         status: { not: "ended" },
       },
       data: {
-        invites: {
-          delete: {
-            gameId_invitedEmail: {
-              gameId: id,
-              invitedEmail: user.email,
-            },
-          },
-        },
         players: {
           connectOrCreate: {
             where: {
@@ -110,6 +102,13 @@ export class GameInvitesController {
             },
           },
         },
+      },
+    });
+
+    return this.gameInvitesService.delete({
+      gameId_invitedEmail: {
+        gameId: id,
+        invitedEmail: user.email,
       },
     });
   }

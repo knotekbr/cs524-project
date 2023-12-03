@@ -26,6 +26,17 @@ export class GameInvitesService {
       cursor,
       where,
       orderBy,
+      include: {
+        game: {
+          include: {
+            createdBy: {
+              select: {
+                nickname: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 

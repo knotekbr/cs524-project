@@ -25,7 +25,7 @@ export class GamesController {
 
   @Post()
   async createGame(@AuthUser() user: UserDto) {
-    return this.gamesService.create({
+    const newGame = await this.gamesService.create({
       createdBy: {
         connect: { id: user.id },
       },
@@ -36,11 +36,34 @@ export class GamesController {
           },
         },
       },
-      events: {
-        create: {
-          eventType: "game_created",
-          userId: user.id,
+    });
+
+    return this.gamesService.update({
+      where: { id: newGame.id },
+      data: {
+        events: {
+          create: {
+            eventType: "game_created",
+            userId: user.id,
+          },
         },
+      },
+    });
+  }
+
+  @Get("active")
+  async getActiveGames(@AuthUser() user: UserDto) {
+    return this.gamesService.findMany({
+      where: {
+        status: { not: "ended" },
+        players: {
+          some: {
+            userId: user.id,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
   }
@@ -55,6 +78,16 @@ export class GamesController {
     });
     if (!game) {
       throw new NotFoundException('Game not found');
+    }
+
+    return game;
+  }
+
+  @Get(":id/join")
+  async joinGame(@AuthUser() user: UserDto, @Param("id", ParseIntPipe) id: number) {
+    const game = await this.gamesService.findOnePlayable(id, user.id);
+    if (!game) {
+      throw new NotFoundException();
     }
 
     return game;
