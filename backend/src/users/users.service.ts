@@ -44,4 +44,11 @@ export class UsersService {
   async delete(where: Prisma.UserWhereUniqueInput): Promise<User> {
     return this.prisma.user.delete({ where });
   }
+
+  async updateActiveGame(userId: number, gameId: number | null): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { activeGameId: gameId },
+    });
+  }
 }

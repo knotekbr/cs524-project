@@ -12,6 +12,18 @@ export class GamesService {
     });
   }
 
+  async findOnePlayable(gameId: number, userId: number): Promise<Game | null> {
+    return this.findOne({
+      id: gameId,
+      status: { not: "ended" },
+      players: {
+        some: {
+          userId,
+        },
+      },
+    });
+  }
+
   async findMany(params: {
     skip?: number;
     take?: number;

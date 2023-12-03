@@ -19,6 +19,7 @@ model User {
   joined           DateTime       @default(now())
   createdGames     Game[]
   games            GamePlayer[]
+  activeGameId     Int?
 }
 
 model Game {

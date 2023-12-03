@@ -5,6 +5,7 @@ import { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { add } from "date-fns";
 import { CreateAccountDto } from "./dtos/CreateAccountDto";
+import { UserDto } from "src/users/dtos/UserDto";
 
 @Injectable()
 export class AuthService {
@@ -54,5 +55,25 @@ export class AuthService {
       token: this.jwtService.sign(payload),
       tokenExpiration: add(new Date(), { days: 1 }),
     };
+  }
+
+  async verifyAuthToken(authToken: string): Promise<UserDto | null> {
+    try {
+      const rawToken = authToken.startsWith("Bearer ") ? authToken.slice(7) : authToken;
+      const payload = this.jwtService.verify(rawToken);
+
+      if (payload && "sub" in payload && typeof payload.sub === "number") {
+        const user = await this.usersService.findOne({ id: payload.sub });
+        if (user) {
+          // eslint-disable-next-line
+          const { saltedPassword, ...result } = user;
+          return result;
+        }
+      }
+    } catch {
+      return null;
+    }
+
+    return null;
   }
 }
