@@ -15,6 +15,7 @@ import { AuthService } from "src/auth/auth.service";
 import { UsersService } from "src/users/users.service";
 import { JoinGameDto } from "./dtos/joinGameDto";
 import { LeaveGameDto } from "./dtos/leaveGameDto";
+import { GameSession } from "./interfaces/gameSession";
 
 @WebSocketGateway({
   cors: {
@@ -26,6 +27,7 @@ import { LeaveGameDto } from "./dtos/leaveGameDto";
 export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   connectedUsers = new Map<string, number>();
+  gameSessions = new Map<number, GameSession>();
 
   constructor(
     private authService: AuthService,
@@ -47,7 +49,6 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (user.activeGameId) {
       this.joinGame(client, { gameId: user.activeGameId });
     }
-    console.log(`CONNECTED: ${user.nickname}`);
   }
 
   async handleDisconnect(client: Socket) {
@@ -60,7 +61,6 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     this.connectedUsers.delete(client.id);
-    console.log(`DISCONNECTED: ${user?.nickname}`);
   }
 
   @SubscribeMessage("join_game")
@@ -86,6 +86,18 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
       },
     });
 
+    if (this.gameSessions.has(gameId)) {
+      const session = this.gameSessions.get(gameId)!;
+      session.allClientIds.add(client.id);
+      session.activeClientIds.add(client.id);
+    } else {
+      this.gameSessions.set(gameId, {
+        currPlayerIndex: 0,
+        allClientIds: new Set(client.id),
+        activeClientIds: new Set(client.id),
+      });
+    }
+
     const gameIdStr = game.id.toString();
     client.join(gameIdStr);
   }
@@ -110,6 +122,27 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
           },
         },
       });
+
+      if (this.gameSessions.has(gameId)) {
+        const session = this.gameSessions.get(gameId)!;
+        session.activeClientIds.delete(client.id);
+
+        if (session.activeClientIds.size === 0) {
+          this.gameSessions.delete(gameId);
+          await this.gamesService.update({
+            where: { id: gameId },
+            data: {
+              status: "ended",
+              events: {
+                create: {
+                  eventType: "game_ended",
+                  eventDetails: "All players left",
+                },
+              },
+            },
+          });
+        }
+      }
 
       const gameIdStr = game.id.toString();
       client.leave(gameIdStr);

@@ -60,6 +60,16 @@ export class GamesController {
     return game;
   }
 
+  @Get(":id/join")
+  async joinGame(@AuthUser() user: UserDto, @Param("id", ParseIntPipe) id: number) {
+    const game = await this.gamesService.findOnePlayable(id, user.id);
+    if (!game) {
+      throw new NotFoundException();
+    }
+
+    return game;
+  }
+
   @Post(":id/start")
   async startGame(@AuthUser() user: UserDto, @Param("id", ParseIntPipe) id: number) {
     const game = await this.gamesService.findOne({ id, createdById: user.id, status: { in: ["created", "paused"] } });
