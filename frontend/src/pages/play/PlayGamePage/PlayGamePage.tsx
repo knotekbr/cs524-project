@@ -4,10 +4,13 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 
-import type { GameState } from "~types";
+import { io } from "socket.io-client";
 
 import { GameBoard } from "~components/game/GameBoard";
 import { PageWrapper } from "~components/layout/PageWrapper";
+import { useAppSelector } from "~hooks/state";
+
+import type { GameState } from "~types";
 
 const PlayerRow = styled(Stack)(({ theme }) => ({
   flexDirection: "row",
@@ -49,6 +52,7 @@ const gameState: GameState = {
 };
 
 export default function PlayGamePage() {
+  const token = useAppSelector((state) => state.auth.token);
   const gameBoardRef = useRef<HTMLDivElement | null>(null);
   const [gameBoardHeight, setGameBoardHeight] = useState(300);
   // Placeholder to easily switch between game board and multiple choice input
@@ -56,11 +60,18 @@ export default function PlayGamePage() {
 
   useEffect(() => {
     if (!gameBoardRef.current) {
-      return;
+      return () => {};
     }
+
+    const ws = io("ws://localhost:3000", { path: "/play", extraHeaders: { authorization: token } });
+    ws.on("message", (msg) => console.log(msg));
 
     const boardElemHeight = gameBoardRef.current.getBoundingClientRect().height;
     setGameBoardHeight(boardElemHeight);
+
+    return () => {
+      ws.disconnect();
+    };
   }, []);
 
   return (
