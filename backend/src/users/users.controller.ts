@@ -8,7 +8,6 @@ import * as bcrypt from "bcrypt";
 @Auth()
 export class UsersController {
   constructor(private usersService: UsersService) {} //user defined functio in users.service.ts
-
   @Get("profle")
   getProfile(@Request() req) {
     return req.user;
