@@ -16,6 +16,7 @@ export class UsersController {
 
   @Patch("profile")
   async updateProfile(@Request() req, @Body() body: Partial<UpdateProfileDto>) {
+
     const { nickname, password, newPassword } = body;
     const id: number = req.user.id;
 
@@ -29,8 +30,8 @@ export class UsersController {
       }
     }
 
-    // eslint-disable-next-line
-    const { saltedPassword, ...result } = await this.usersService.update({
+     // eslint-disable-next-line
+    const { saltedPassword, ...result } = await this.UsersService.update({
       where: { id },
       data: {
         nickname,
