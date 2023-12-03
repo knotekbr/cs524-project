@@ -11,12 +11,10 @@ export class UsersController {
   @Get("profle")
   getProfile(@Request() req) {
     return req.user;
-
   }
 
   @Patch("profile")
   async updateProfile(@Request() req, @Body() body: Partial<UpdateProfileDto>) {
-
     const { nickname, password, newPassword } = body;
     const id: number = req.user.id;
 
@@ -30,19 +28,15 @@ export class UsersController {
       }
     }
 
-     // eslint-disable-next-line
+    // eslint-disable-next-line
     const { saltedPassword, ...result } = await this.usersService.update({
       where: { id },
       data: {
         nickname,
         saltedPassword: newSaltedPassword,
-
       },
     });
 
     return result;
   }
 }
-
-
-

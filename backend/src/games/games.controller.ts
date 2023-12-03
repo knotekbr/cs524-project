@@ -77,7 +77,7 @@ export class GamesController {
       },
     });
     if (!game) {
-      throw new NotFoundException('Game not found');
+      throw new NotFoundException("Game not found");
     }
 
     return game;
@@ -97,7 +97,7 @@ export class GamesController {
   async startGame(@AuthUser() user: UserDto, @Param("id", ParseIntPipe) id: number) {
     const game = await this.gamesService.findOne({ id, createdById: user.id, status: { in: ["created", "paused"] } });
     if (!game) {
-      throw new NotFoundException('Game not found or not eligible to start');
+      throw new NotFoundException("Game not found or not eligible to start");
     }
 
     return this.gamesService.update({
@@ -122,7 +122,7 @@ export class GamesController {
       status: "in_progress",
     });
     if (!game) {
-      throw new NotFoundException('Game not found or not in progress');
+      throw new NotFoundException("Game not found or not in progress");
     }
 
     return this.gamesService.update({
@@ -146,7 +146,7 @@ export class GamesController {
       status: "paused",
     });
     if (!game) {
-      throw new NotFoundException('Game not found or not paused');
+      throw new NotFoundException("Game not found or not paused");
     }
     return this.gamesService.update({
       where: { id },
@@ -161,5 +161,4 @@ export class GamesController {
       },
     });
   }
-
 }
