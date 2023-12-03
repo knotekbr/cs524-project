@@ -3,3 +3,4 @@ export class UpdateProfileDto {
   password: string;
   newPassword: string;
 }
+
