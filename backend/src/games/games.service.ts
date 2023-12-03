@@ -9,6 +9,11 @@ export class GamesService {
   async findOne(gameWhereUniqueInput: Prisma.GameWhereUniqueInput): Promise<Game | null> {
     return this.prisma.game.findUnique({
       where: gameWhereUniqueInput,
+      include: {
+        createdBy: {
+          select: { nickname: true },
+        },
+      },
     });
   }
 
@@ -38,11 +43,23 @@ export class GamesService {
       cursor,
       where,
       orderBy,
+      include: {
+        createdBy: {
+          select: { nickname: true },
+        },
+      },
     });
   }
 
   async create(data: Prisma.GameCreateInput): Promise<Game> {
-    return this.prisma.game.create({ data });
+    return this.prisma.game.create({
+      data,
+      include: {
+        createdBy: {
+          select: { nickname: true },
+        },
+      },
+    });
   }
 
   async update(params: { where: Prisma.GameWhereUniqueInput; data: Prisma.GameUpdateInput }): Promise<Game> {
@@ -50,10 +67,22 @@ export class GamesService {
     return this.prisma.game.update({
       data,
       where,
+      include: {
+        createdBy: {
+          select: { nickname: true },
+        },
+      },
     });
   }
 
   async delete(where: Prisma.GameWhereUniqueInput): Promise<Game> {
-    return this.prisma.game.delete({ where });
+    return this.prisma.game.delete({
+      where,
+      include: {
+        createdBy: {
+          select: { nickname: true },
+        },
+      },
+    });
   }
 }
