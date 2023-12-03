@@ -31,7 +31,7 @@ export class UsersController {
     }
 
      // eslint-disable-next-line
-    const { saltedPassword, ...result } = await this.UsersService.update({
+    const { saltedPassword, ...result } = await this.usersService.update({
       where: { id },
       data: {
         nickname,
