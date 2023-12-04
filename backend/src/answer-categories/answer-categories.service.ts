@@ -29,6 +29,13 @@ export class AnswerCategoriesService {
     });
   }
 
+  async findManyRandom(count: number = 6): Promise<AnswerCategory[]> {
+    const result = (await this.prisma
+      .$queryRaw`SELECT id, categoryName FROM AnswerCategory ORDER BY random() LIMIT ${count}`) as AnswerCategory[];
+
+    return result;
+  }
+
   async create(data: Prisma.AnswerCategoryCreateInput): Promise<AnswerCategory> {
     return this.prisma.answerCategory.create({ data });
   }
