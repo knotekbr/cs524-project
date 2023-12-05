@@ -8,6 +8,6 @@ async function bootstrap() {
   app.enableCors({ origin: "*" });
   app.useWebSocketAdapter(new AuthIoAdapter(app));
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
