@@ -1,16 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 
-import { io } from "socket.io-client";
+import { useParams } from "react-router-dom";
 
+import { useGetGameplayStateQuery } from "~api/request/games";
+import { SocketSingleton } from "~app/services/SocketSingleton";
 import { GameBoard } from "~components/game/GameBoard";
 import { PageWrapper } from "~components/layout/PageWrapper";
 import { useAppSelector } from "~hooks/state";
 
-import type { GameState } from "~types";
+import type { GameState, InvitePlayerDto, JoinGameDto, LeaveGameDto, SelectPromptDto, SelectResponseDto } from "~types";
 
 const PlayerRow = styled(Stack)(({ theme }) => ({
   flexDirection: "row",
@@ -52,27 +54,63 @@ const gameState: GameState = {
 };
 
 export default function PlayGamePage() {
+  const { gameId: gameIdStr } = useParams();
+  const gameId = useMemo(() => parseInt(gameIdStr || "0", 10) || 0, [gameIdStr]);
+
+  const { data: gameplayState, isLoading: gameplayStateLoading } = useGetGameplayStateQuery({
+    urlParams: { id: gameId },
+  });
   const token = useAppSelector((state) => state.auth.token);
+
   const gameBoardRef = useRef<HTMLDivElement | null>(null);
   const [gameBoardHeight, setGameBoardHeight] = useState(300);
   // Placeholder to easily switch between game board and multiple choice input
   const [answerMode, setAnswerMode] = useState(false);
 
+  const ws = useMemo(() => SocketSingleton.socket(token), []);
+
+  const joinGame = (message: JoinGameDto) => {
+    ws.emit("join_game", message);
+  };
+
+  const leaveGame = (message: LeaveGameDto) => {
+    ws.emit("leave_game", message);
+  };
+
+  const invitePlayer = (message: InvitePlayerDto) => {
+    ws.emit("invite_player", message);
+  };
+
+  const startGame = () => {
+    ws.emit("start_game");
+  };
+
+  const selectPrompt = (message: SelectPromptDto) => {
+    ws.emit("select_prompt", message);
+  };
+
+  const selectResponse = (message: SelectResponseDto) => {
+    ws.emit("select_response", message);
+  };
+
   useEffect(() => {
-    if (!gameBoardRef.current) {
-      return () => {};
+    if (!gameBoardRef.current || gameplayStateLoading) {
+      return;
     }
 
-    const ws = io("ws://localhost:3000", { path: "/play", extraHeaders: { authorization: token } });
-    ws.on("message", (msg) => console.log(msg));
+    joinGame({ gameId });
 
     const boardElemHeight = gameBoardRef.current.getBoundingClientRect().height;
     setGameBoardHeight(boardElemHeight);
+  }, [gameplayStateLoading]);
 
-    return () => {
-      ws.disconnect();
-    };
-  }, []);
+  if (!gameplayState) {
+    return (
+      <PageWrapper alignItems="center">
+        <Typography variant="h4">Loading...</Typography>
+      </PageWrapper>
+    );
+  }
 
   return (
     <PageWrapper>

@@ -29,6 +29,8 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       "ENV.API_BASE_URL": JSON.stringify(env.REACT_APP_API_URL),
+      "ENV.WS_BASE_URL": JSON.stringify(env.REACT_APP_WS_URL),
+      "ENV.WS_PATH": JSON.stringify(env.REACT_APP_WS_PATH),
     },
   };
 });

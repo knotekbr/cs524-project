@@ -83,8 +83,8 @@ export class GamesController {
     return game;
   }
 
-  @Get(":id/join")
-  async joinGame(@AuthUser() user: UserDto, @Param("id", ParseIntPipe) id: number) {
+  @Get(":id/play")
+  async getGameplayState(@AuthUser() user: UserDto, @Param("id", ParseIntPipe) id: number) {
     const game = await this.gamesService.findOnePlayable(id, user.id);
     if (!game) {
       throw new NotFoundException();
