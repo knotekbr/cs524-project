@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import { useGetGameplayStateQuery } from "~api/request/games";
 import { SocketSingleton } from "~app/services/SocketSingleton";
 import { GameBoard } from "~components/game/GameBoard";
+import { PregameLobby } from "~components/game/PregameLobby";
 import { PageWrapper } from "~components/layout/PageWrapper";
 import { useAppSelector } from "~hooks/state";
 
@@ -94,20 +95,42 @@ export default function PlayGamePage() {
   };
 
   useEffect(() => {
-    if (!gameBoardRef.current || gameplayStateLoading) {
+    if (gameplayStateLoading) {
+      return;
+    }
+    joinGame({ gameId });
+  }, [gameplayStateLoading]);
+
+  useEffect(() => {
+    if (!gameBoardRef.current) {
       return;
     }
 
-    joinGame({ gameId });
-
     const boardElemHeight = gameBoardRef.current.getBoundingClientRect().height;
     setGameBoardHeight(boardElemHeight);
-  }, [gameplayStateLoading]);
+  }, []);
 
   if (!gameplayState) {
     return (
       <PageWrapper alignItems="center">
         <Typography variant="h4">Loading...</Typography>
+      </PageWrapper>
+    );
+  }
+
+  const { currPhase, createdById } = gameplayState;
+
+  if (currPhase === "lobby") {
+    return (
+      <PageWrapper>
+        <Stack direction="row" gap={1.5} p={1}>
+          <PregameLobby
+            players={gameplayState.players}
+            onInvite={invitePlayer}
+            onStartGame={startGame}
+            gameCreatorId={createdById}
+          />
+        </Stack>
       </PageWrapper>
     );
   }
