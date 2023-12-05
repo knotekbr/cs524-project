@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import { CategoryColumnProps } from "./CategoryColumn.types";
 import { CategoryItem } from "../CategoryItem";
 
-export default function CategoryColumn({ answersAvailable, categoryName }: CategoryColumnProps) {
+export default function CategoryColumn({ answersAvailable, categoryName, onClickPrompt }: CategoryColumnProps) {
   return (
     <Stack gap={1} flex={1}>
       <CategoryItem itemType="title" label={categoryName} />
@@ -14,7 +14,7 @@ export default function CategoryColumn({ answersAvailable, categoryName }: Categ
             itemType="answer"
             label={dollarAmount}
             available={available}
-            onClick={() => {}}
+            onClick={() => onClickPrompt(index)}
             key={`${categoryName}-${dollarAmount}`}
           />
         );

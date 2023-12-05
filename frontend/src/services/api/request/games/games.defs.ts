@@ -2,7 +2,7 @@ import { defineEndpoint } from "~api/helpers/defineEndpoint";
 
 import { ManyGamesResponse, OneGameResponse } from "./games.types";
 
-import { IdUrlArg } from "~types";
+import { GameplayState, IdUrlArg, IsoDateTime } from "~types";
 
 export const allGamesEndpoint = defineEndpoint({
   url: () => "games",
@@ -31,11 +31,26 @@ export const showGameEndpoint = defineEndpoint({
   },
 });
 
-export const joinGameEndpoint = defineEndpoint({
-  url: ({ id }: IdUrlArg) => `games/${id}/join`,
-  transformer: (data: OneGameResponse) => data,
+export const gameplayEndpoint = defineEndpoint({
+  url: ({ id }: IdUrlArg) => `games/${id}/play`,
+  transformer: (data: OneGameResponse): GameplayState => ({
+    ...data,
+    boardState: [],
+    categories: [],
+    currPhase: "lobby",
+    currPlayerId: 0,
+    currRound: 0,
+    phaseTimeUp: new Date().toISOString() as IsoDateTime,
+    players: [],
+    prompt: {
+      category: "",
+      prompt: "",
+      responses: ["", "", "", ""],
+      value: 0,
+    },
+  }),
   methods: {
-    post: {},
+    get: {},
   },
 });
 

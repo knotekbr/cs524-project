@@ -189,7 +189,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
         session.activeClientStates.delete(client.id);
 
         if (session.activeClientStates.size === 0) {
-          await this.endGame(gameId, "All players left");
+          await this.endGame(gameId, session, "All players left");
         } else {
           const playerStateMessage = this.getPlayerStateMessage(session);
           this.server.to(gameIdStr).emit("player_state", playerStateMessage);
@@ -326,7 +326,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
 
     if (!prompt) {
-      this.endGame(game.id, "Unable to find a prompt");
+      this.endGame(game.id, session, "Unable to find a prompt");
       return;
     }
 
@@ -406,12 +406,13 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   getPromptStateMessage(session: GameSession): PromptStateDto {
-    const { promptState, phaseTimeUp } = session;
+    const { promptState, phaseTimeUp, currPhase } = session;
     const { category, prompt, responses, value } = promptState;
 
     return {
       phaseTimeUp,
       prompt: { category, prompt, responses, value },
+      currPhase,
     };
   }
 
@@ -476,7 +477,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     if (toPhase === "prompts") {
       if (session.promptsRemaining === 0) {
-        await this.endGame(gameId, "No prompts remaining");
+        await this.endGame(gameId, session, "No prompts remaining");
         return;
       }
 
@@ -486,7 +487,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       const currPlayerId = this.getCurrentPlayerId(session);
       if (currPlayerId === null) {
-        this.endGame(gameId, "All players left");
+        this.endGame(gameId, session, "All players left");
         return;
       }
 
@@ -522,8 +523,17 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  async endGame(gameId: number, eventDetails?: string) {
-    this.gameSessions.delete(gameId);
+  async endGame(gameId: number, session: GameSession, eventDetails?: string) {
+    session.currPhase = "results";
+
+    const playerStateMessage = this.getPlayerStateMessage(session);
+    const gameStateMessage = this.getGameStateMessage(session);
+    const gameIdStr = gameId.toString();
+
+    this.server.to(gameIdStr).emit("player_state", playerStateMessage);
+    this.server.to(gameIdStr).emit("game_state", { ...gameStateMessage, status: "ended" });
+    this.server.to(gameIdStr).emit("game_ended");
+    this.server.to(gameIdStr).disconnectSockets(true);
 
     await this.gamesService.update({
       where: { id: gameId },
@@ -538,8 +548,6 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
       },
     });
 
-    const gameIdStr = gameId.toString();
-    this.server.to(gameIdStr).emit("game_ended");
-    this.server.to(gameIdStr).disconnectSockets(true);
+    this.gameSessions.delete(gameId);
   }
 }
