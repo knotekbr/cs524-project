@@ -18,7 +18,7 @@ Category,Difficulty,Question,Correct Answer,Wrong Answer 1,Wrong Answer 2,Wrong 
 "Artificial Intelligence",2,"This popular Python library is used for numerical computations and is fundamental for deep learning.","TensorFlow","PyTorch","Keras","NumPy"
 "Artificial Intelligence",3,"This type of machine learning involves models that can make inferences with no supervision.","Unsupervised Learning","Supervised Learning","Reinforcement Learning","Semi-supervised Learning"
 "Artificial Intelligence",4,"A common method used in AI to train deep neural networks by minimizing the error through adjusting weights.","Backpropagation","Gradient Descent","Cluster Analysis","Dimensionality Reduction"
-"Artificial Intelligence",5,"This AI concept refers to machines making decisions or taking actions
+"Artificial Intelligence",5,"This AI concept refers to machines making decisions or taking actions","Automation","Machine Learning","Prompt Engineering","Modeling"
 "Cloud Computing",1,"This cloud computing service model provides virtualized computing resources over the internet.","IaaS (Infrastructure as a Service)","SaaS (Software as a Service)","PaaS (Platform as a Service)","FaaS (Function as a Service)"
 "Cloud Computing",2,"Offered by Amazon, this is one of the most popular cloud services platforms.","AWS (Amazon Web Services)","Google Cloud Platform","Microsoft Azure","IBM Cloud"
 "Cloud Computing",3,"This technology, essential for cloud computing, allows for the creation of virtualized IT resources.","Virtualization","Cloud Storage","Distributed Computing","Containerization"
