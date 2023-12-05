@@ -9,6 +9,13 @@ export class AnswerPromptsService {
   async findOne(answerPromptWhereUniqueInput: Prisma.AnswerPromptWhereUniqueInput): Promise<AnswerPrompt | null> {
     return this.prisma.answerPrompt.findUnique({
       where: answerPromptWhereUniqueInput,
+      include: {
+        category: {
+          select: {
+            categoryName: true,
+          },
+        },
+      },
     });
   }
 
@@ -26,11 +33,27 @@ export class AnswerPromptsService {
       cursor,
       where,
       orderBy,
+      include: {
+        category: {
+          select: {
+            categoryName: true,
+          },
+        },
+      },
     });
   }
 
   async create(data: Prisma.AnswerPromptCreateInput): Promise<AnswerPrompt> {
-    return this.prisma.answerPrompt.create({ data });
+    return this.prisma.answerPrompt.create({
+      data,
+      include: {
+        category: {
+          select: {
+            categoryName: true,
+          },
+        },
+      },
+    });
   }
 
   async update(params: {
@@ -41,10 +64,26 @@ export class AnswerPromptsService {
     return this.prisma.answerPrompt.update({
       data,
       where,
+      include: {
+        category: {
+          select: {
+            categoryName: true,
+          },
+        },
+      },
     });
   }
 
   async delete(where: Prisma.AnswerPromptWhereUniqueInput): Promise<AnswerPrompt> {
-    return this.prisma.answerPrompt.delete({ where });
+    return this.prisma.answerPrompt.delete({
+      where,
+      include: {
+        category: {
+          select: {
+            categoryName: true,
+          },
+        },
+      },
+    });
   }
 }

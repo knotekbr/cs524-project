@@ -8,10 +8,12 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+import { useGetAllPromptsQuery } from "~api/request/answer-prompts";
 import { CsvUploadDialog } from "~components/CsvUploadDialog";
 import { PageWrapper } from "~components/layout/PageWrapper";
 
 export default function ManageQuestionsPage() {
+  const { data: allPrompts = [] } = useGetAllPromptsQuery();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const openDialog = () => {
@@ -32,50 +34,19 @@ export default function ManageQuestionsPage() {
           <FilterIcon />
         </IconButton>
       </Stack>
-      <Card>
-        <CardHeader
-          title="This data type stores ordered lists of characters."
-          subheader={
-            <Stack direction="row" justifyContent="space-between">
-              <Typography>What is a string?</Typography>
-              <Typography>Category: Data Types</Typography>
-            </Stack>
-          }
-        />
-      </Card>
-      <Card>
-        <CardHeader
-          title="This data type stores ordered lists of characters."
-          subheader={
-            <Stack direction="row" justifyContent="space-between">
-              <Typography>What is a string?</Typography>
-              <Typography>Category: Data Types</Typography>
-            </Stack>
-          }
-        />
-      </Card>
-      <Card>
-        <CardHeader
-          title="This data type stores ordered lists of characters."
-          subheader={
-            <Stack direction="row" justifyContent="space-between">
-              <Typography>What is a string?</Typography>
-              <Typography>Category: Data Types</Typography>
-            </Stack>
-          }
-        />
-      </Card>
-      <Card>
-        <CardHeader
-          title="This data type stores ordered lists of characters."
-          subheader={
-            <Stack direction="row" justifyContent="space-between">
-              <Typography>What is a string?</Typography>
-              <Typography>Category: Data Types</Typography>
-            </Stack>
-          }
-        />
-      </Card>
+      {allPrompts.map((prompt) => (
+        <Card key={prompt.id}>
+          <CardHeader
+            title={prompt.prompt}
+            subheader={
+              <Stack direction="row" justifyContent="space-between">
+                <Typography>{prompt.correctResponse}</Typography>
+                <Typography>Category: {prompt.category.categoryName}</Typography>
+              </Stack>
+            }
+          />
+        </Card>
+      ))}
       <CsvUploadDialog open={dialogOpen} onClose={closeDialog} />
     </PageWrapper>
   );

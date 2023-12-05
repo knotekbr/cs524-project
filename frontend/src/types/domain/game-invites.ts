@@ -1,4 +1,4 @@
-import { GameDto } from ".";
+import { GameDto } from "./games";
 import { IsoDateTime } from "../date-times";
 
 export type GameInviteDto = {

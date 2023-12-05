@@ -1,7 +1,15 @@
 import { baseApi } from "~api";
 
+import { allPromptsEndpoint } from "./answer-prompts.defs";
+
+const { get: getAllPrompts } = allPromptsEndpoint;
+
 export const answerPromptsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    getAllPrompts: getAllPrompts.builder(build)({
+      query: getAllPrompts.defaultQuery,
+      transformResponse: getAllPrompts.transformer,
+    }),
     uploadCsv: build.mutation({
       query: ({ file }: { file: File }) => {
         const body = new FormData();
@@ -18,4 +26,4 @@ export const answerPromptsApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useUploadCsvMutation } = answerPromptsApi;
+export const { useGetAllPromptsQuery, useUploadCsvMutation } = answerPromptsApi;

@@ -1,4 +1,4 @@
-import { BadRequestException, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Get, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { Controller } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
@@ -16,6 +16,12 @@ export class AnswerPromptsController {
     private answerPromptsService: AnswerPromptsService,
     private answerCategoriesService: AnswerCategoriesService
   ) {}
+
+  @Get()
+  @Auth(Role.Admin)
+  async getAllPrompts() {
+    return this.answerPromptsService.findMany({});
+  }
 
   @Post("upload")
   @Auth(Role.Admin)
