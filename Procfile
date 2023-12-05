@@ -1,3 +1,3 @@
 web: yarn build && yarn start
 
-release: npx prisma migrate deploy
+release: yarn backend prisma migrate deploy
