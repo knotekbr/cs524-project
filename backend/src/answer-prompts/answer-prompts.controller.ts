@@ -1,4 +1,4 @@
-import { BadRequestException, Get, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Get, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { Controller } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Readable } from "stream";
@@ -46,6 +46,7 @@ export class AnswerPromptsController {
             category = await this.answerCategoriesService.create({
               categoryName: parsed.Category,
             });
+            categories[parsed.Category] = category;
           }
 
           await this.answerPromptsService.create({

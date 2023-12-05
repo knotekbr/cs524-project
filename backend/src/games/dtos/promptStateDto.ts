@@ -4,4 +4,5 @@ import { PromptState } from "../interfaces/promptState";
 export class PromptStateDto {
   phaseTimeUp: GameSession["phaseTimeUp"];
   prompt: Omit<PromptState, "correctResponseIndex">;
+  currPhase: GameSession["currPhase"];
 }

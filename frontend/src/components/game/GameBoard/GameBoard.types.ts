@@ -1,8 +1,10 @@
 import type { StackProps } from "@mui/material";
 
-import type { GameCategory } from "~types";
+import type { GameplayState, SelectPromptDto } from "~types";
 
 export type GameBoardProps = {
-  categories: GameCategory[];
+  categories: GameplayState["categories"];
+  boardState: GameplayState["boardState"];
   gameBoardRef: StackProps["ref"];
+  onClickPrompt: (message: Omit<SelectPromptDto, "roundNumber">) => void;
 };

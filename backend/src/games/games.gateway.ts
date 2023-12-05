@@ -406,12 +406,13 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   getPromptStateMessage(session: GameSession): PromptStateDto {
-    const { promptState, phaseTimeUp } = session;
+    const { promptState, phaseTimeUp, currPhase } = session;
     const { category, prompt, responses, value } = promptState;
 
     return {
       phaseTimeUp,
       prompt: { category, prompt, responses, value },
+      currPhase,
     };
   }
 
