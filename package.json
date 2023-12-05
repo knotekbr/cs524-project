@@ -12,7 +12,8 @@
     "db:seed": "yarn backend prisma db seed",
     "db:init": "yarn backend prisma migrate reset",
     "dev": "concurrently \"yarn backend dev\" \"yarn frontend dev\"",
-    "build": "yarn db:generate && yarn backend build",
+    "postinstall": "yarn db:generate",
+    "build": "yarn backend build",
     "start": "yarn backend start:prod"
   },
   "devDependencies": {
