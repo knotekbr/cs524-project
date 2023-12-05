@@ -85,13 +85,17 @@ export default function PlayGamePage() {
 
   useEffect(() => {
     if (gameplayStateLoading || !ws.connected || joinedGame) {
-      return;
+      return () => {};
     }
 
     if (!joinedGame) {
       joinGame({ gameId });
       setJoinedGame(true);
     }
+
+    return () => {
+      setJoinedGame(false);
+    };
   }, [gameplayStateLoading, ws.connected]);
 
   useEffect(() => {
@@ -136,7 +140,9 @@ export default function PlayGamePage() {
     const currPlayerNickname = players.find((player) => player.id === currPlayerId)?.nickname || "Unknown";
     const isCurrPlayer = currPlayerId === user.id;
 
-    setResponseChosen(-1);
+    if (responseChosen !== -1) {
+      setResponseChosen(-1);
+    }
 
     return (
       <PageWrapper>
@@ -252,6 +258,29 @@ export default function PlayGamePage() {
               </Stack>
             </Stack>
           </Stack>
+        </Stack>
+      </PageWrapper>
+    );
+  }
+
+  if (currPhase === "results") {
+    const { players } = gameplayState;
+    const sortedPlayers = players.sort((a, b) => a.score - b.score);
+
+    return (
+      <PageWrapper>
+        <Stack gap={1.5} p={1}>
+          <Typography variant="h4" textAlign="center">
+            Game Over!
+          </Typography>
+          <Typography variant="h6">Final Scores:</Typography>
+          <ul>
+            {sortedPlayers.map((player) => (
+              <li key={player.id}>
+                {player.nickname} - {`$${player.score}`}
+              </li>
+            ))}
+          </ul>
         </Stack>
       </PageWrapper>
     );
