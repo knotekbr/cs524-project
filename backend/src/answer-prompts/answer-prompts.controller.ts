@@ -21,16 +21,12 @@ export class AnswerPromptsController {
   @Auth(Role.Admin)
   @UseInterceptors(FileInterceptor("file", {}))
   async uploadCsv(@UploadedFile() file: Express.Multer.File) {
-    if (!file.filename.endsWith(".csv")) {
-      throw new BadRequestException("Must be a csv file");
-    }
-
     const fileStream = Readable.from(file.buffer);
     papa.parse(fileStream, {
       header: true,
       worker: true,
       delimiter: ",",
-      dynamicTyping: true,
+      dynamicTyping: (field) => field === "Difficulty",
       complete: async (results: papa.ParseResult<ParsedPrompt>) => {
         const { data } = results;
         const categories: Record<string, AnswerCategory> = {};
@@ -54,6 +50,8 @@ export class AnswerPromptsController {
             otherResponses: [parsed["Wrong Answer 1"], parsed["Wrong Answer 2"], parsed["Wrong Answer 3"]],
           });
         }
+
+        fileStream.destroy();
       },
     });
   }
