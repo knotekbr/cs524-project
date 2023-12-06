@@ -363,7 +363,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
           create: {
             eventType: "answer_chosen",
             userId: user.id,
-            eventDetails: `${user.nickname} chose prompt '${prompt.prompt}' in category ${category.categoryName}`,
+            eventDetails: `${user.nickname} chose prompt '${prompt.prompt}' in category '${category.categoryName}'`,
           },
         },
       },

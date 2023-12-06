@@ -26,6 +26,17 @@ export class GameEventsService {
       cursor,
       where,
       orderBy,
+      include: {
+        associatedPlayer: {
+          select: {
+            user: {
+              select: {
+                nickname: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 

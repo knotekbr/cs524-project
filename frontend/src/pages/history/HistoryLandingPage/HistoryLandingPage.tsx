@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
@@ -7,12 +9,26 @@ import Typography from "@mui/material/Typography";
 import { format, parseISO } from "date-fns";
 
 import { useGetAllGamesQuery } from "~api/request/games";
+import { GameEventsDialog } from "~components/GameEventsDialog";
 import { useAuth } from "~components/auth/AuthProvider";
 import { PageWrapper } from "~components/layout/PageWrapper";
+
+import { GameDto } from "~types";
 
 export default function HistoryLandingPage() {
   const { user } = useAuth();
   const { data: allGames = [] } = useGetAllGamesQuery();
+  const [selectedGame, setSelectedGame] = useState<GameDto>();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const handleReviewGame = (game: GameDto) => {
+    setSelectedGame(game);
+    setDialogOpen(true);
+  };
 
   const getDisplayDate = (dateString: string) => {
     const date = parseISO(dateString);
@@ -33,7 +49,7 @@ export default function HistoryLandingPage() {
                 subheader={
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Typography>{getDisplayDate(game.createdAt)}</Typography>
-                    <Button size="small" onClick={() => {}}>
+                    <Button size="small" onClick={() => handleReviewGame(game)}>
                       Review
                     </Button>
                   </Stack>
@@ -42,6 +58,9 @@ export default function HistoryLandingPage() {
             </Card>
           ))}
         </>
+      )}
+      {selectedGame && (
+        <GameEventsDialog game={selectedGame} open={dialogOpen} onClose={closeDialog} key={selectedGame.id} />
       )}
     </PageWrapper>
   );
