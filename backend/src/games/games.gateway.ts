@@ -627,10 +627,16 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
       data: {
         status: "ended",
         events: {
-          create: {
-            eventType: "game_ended",
-            eventDetails,
-          },
+          create: [
+            {
+              eventType: "game_ended",
+              eventDetails,
+            },
+            {
+              eventType: "scores_updated",
+              eventDetails: JSON.stringify([...session.allClientStates.values()].sort((a, b) => a.score - b.score)),
+            },
+          ],
         },
       },
     });

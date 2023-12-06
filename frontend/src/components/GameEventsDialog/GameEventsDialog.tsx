@@ -16,7 +16,7 @@ import { useAuth } from "~components/auth/AuthProvider";
 
 import { GameEventsDialogProps } from "./GameEventsDialog.types";
 
-import { GameEventType } from "~types";
+import { GameEventType, PlayerState } from "~types";
 
 const eventTypeMap: Record<GameEventType, string> = {
   answer_chosen: "Prompt Chosen",
@@ -28,7 +28,7 @@ const eventTypeMap: Record<GameEventType, string> = {
   player_joined: "Player Joined",
   player_left: "Player Left",
   response_chosen: "Response Chosen",
-  scores_updated: "Scores Updated",
+  scores_updated: "Final Scores",
 };
 
 export default function GameEventsDialog({ game, onClose, open }: GameEventsDialogProps) {
@@ -49,10 +49,20 @@ export default function GameEventsDialog({ game, onClose, open }: GameEventsDial
           {gameEvents.map(({ associatedPlayer, eventDetails, eventType, timestamp }) => (
             <li key={`${eventType}${timestamp}`} style={{ marginBottom: "10px" }}>
               {eventTypeMap[eventType]} ({getDisplayDate(timestamp)})
-              <ul>
-                {associatedPlayer && <li>Player: {associatedPlayer.user.nickname}</li>}
-                {eventDetails && <li>Details: {eventDetails}</li>}
-              </ul>
+              {eventType !== "scores_updated" ? (
+                <ul>
+                  {associatedPlayer && <li>Player: {associatedPlayer.user.nickname}</li>}
+                  {eventDetails && <li>Details: {eventDetails}</li>}
+                </ul>
+              ) : (
+                <ul>
+                  {(JSON.parse(eventDetails!) as PlayerState[]).map((player) => (
+                    <li key={`${player.id}_final-score`}>
+                      {player.nickname} - ${player.score}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))}
         </ol>
