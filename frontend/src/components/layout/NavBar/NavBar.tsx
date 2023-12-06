@@ -1,5 +1,5 @@
 import LogoutIcon from "@mui/icons-material/Logout";
-import SettingsIcon from "@mui/icons-material/Settings";
+// import SettingsIcon from "@mui/icons-material/Settings";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -39,9 +39,9 @@ export default function NavBar() {
             </Stack>
             <Stack className="nav-bar-button-group">
               <Typography style={{ userSelect: "none" }}>{user.nickname}</Typography>
-              <Button variant="navBarIcon" onClick={() => navigate("settings")}>
+              {/* <Button variant="navBarIcon" onClick={() => navigate("settings")}>
                 <SettingsIcon />
-              </Button>
+              </Button> */}
               <Button variant="navBarIcon" onClick={logOut}>
                 <LogoutIcon />
               </Button>

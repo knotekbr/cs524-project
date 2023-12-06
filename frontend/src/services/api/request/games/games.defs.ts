@@ -15,6 +15,14 @@ export const allGamesEndpoint = defineEndpoint({
   },
 });
 
+export const adminAllGamesEndpoint = defineEndpoint({
+  url: () => "games/admin",
+  transformer: (data: ManyGamesResponse) => data,
+  methods: {
+    get: {},
+  },
+});
+
 export const activeGamesEndpoint = defineEndpoint({
   url: () => "games/active",
   transformer: (data: ManyGamesResponse) => data,

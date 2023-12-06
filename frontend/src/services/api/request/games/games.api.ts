@@ -5,6 +5,7 @@ import { AppRootState } from "~state/store";
 
 import {
   activeGamesEndpoint,
+  adminAllGamesEndpoint,
   allGamesEndpoint,
   gameplayEndpoint,
   pauseGameEndpoint,
@@ -15,6 +16,7 @@ import {
 import { GameEndedDto, GameStateDto, PlayerStateDto, PromptStateDto } from "~types";
 
 const { get: getAllGames, post: createGame } = allGamesEndpoint;
+const { get: adminGetAllGames } = adminAllGamesEndpoint;
 const { get: getActiveGames } = activeGamesEndpoint;
 const { get: getGame } = showGameEndpoint;
 const { get: getGameplayState } = gameplayEndpoint;
@@ -30,6 +32,10 @@ export const gamesApi = baseApi.injectEndpoints({
     createGame: createGame.builder(build)({
       query: createGame.defaultQuery,
       transformResponse: createGame.transformer,
+    }),
+    adminGetAllGames: adminGetAllGames.builder(build)({
+      query: adminGetAllGames.defaultQuery,
+      transformResponse: adminGetAllGames.transformer,
     }),
     getActiveGames: getActiveGames.builder(build)({
       query: getActiveGames.defaultQuery,
@@ -116,6 +122,7 @@ export const gamesApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useAdminGetAllGamesQuery,
   useCreateGameMutation,
   useGetActiveGamesQuery,
   useGetAllGamesQuery,
