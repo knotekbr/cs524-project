@@ -3,6 +3,7 @@ import { Auth } from "src/common/decorators/auth.decorator";
 import { GamesService } from "./games.service";
 import { AuthUser } from "src/common/decorators/authUser.decorator";
 import { UserDto } from "src/users/dtos/UserDto";
+import { Role } from "src/common/enums/role.enum";
 
 @Controller("games")
 @Auth()
@@ -17,6 +18,16 @@ export class GamesController {
           some: { userId: user.id },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  @Get("admin")
+  @Auth(Role.Admin)
+  async getAllGamesAdmin() {
+    return this.gamesService.findMany({
       orderBy: {
         createdAt: "desc",
       },

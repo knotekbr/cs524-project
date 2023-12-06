@@ -3,10 +3,17 @@ import { Socket, io } from "socket.io-client";
 class SocketWrapper {
   private ws: Socket | null = null;
 
-  socket(token: string): Socket {
+  private cleanedUp: boolean = false;
+
+  get connected(): boolean {
+    return this.ws?.connected || false;
+  }
+
+  instance(token: string): Socket {
     if (this.ws !== null) {
       if (this.ws.disconnected) {
         this.ws.connect();
+        this.cleanedUp = false;
       }
       return this.ws;
     }
@@ -17,12 +24,13 @@ class SocketWrapper {
   }
 
   cleanup(): void {
-    if (this.ws === null) {
+    if (this.ws === null || this.cleanedUp) {
       return;
     }
 
     this.ws.offAny();
     this.ws.disconnect();
+    this.cleanedUp = true;
   }
 }
 

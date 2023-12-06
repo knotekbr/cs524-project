@@ -27,7 +27,7 @@ export class GameInvitesController {
   async getAllInvites(@AuthUser() user: UserDto) {
     return this.gameInvitesService.findMany({
       where: {
-        invitedEmail: user.email,
+        invitedEmail: user.email.toLowerCase(),
       },
       orderBy: {
         createdAt: "desc",
@@ -37,8 +37,9 @@ export class GameInvitesController {
 
   @Post(":id/invite")
   async invitePlayer(@AuthUser() user: UserDto, @Param("id", ParseIntPipe) id: number, @Body() body: InvitePlayerDto) {
-    const { email } = body;
-    if (email === user.email) {
+    const { email: rawEmail } = body;
+    const email = rawEmail.toLowerCase();
+    if (email === user.email.toLowerCase()) {
       throw new BadRequestException("You can't invite yourself to a game");
     }
 
@@ -76,7 +77,7 @@ export class GameInvitesController {
     const invite = await this.gameInvitesService.findOne({
       gameId_invitedEmail: {
         gameId: id,
-        invitedEmail: user.email,
+        invitedEmail: user.email.toLowerCase(),
       },
     });
     if (!invite) {
@@ -118,7 +119,7 @@ export class GameInvitesController {
     return this.gameInvitesService.delete({
       gameId_invitedEmail: {
         gameId: id,
-        invitedEmail: user.email,
+        invitedEmail: user.email.toLowerCase(),
       },
     });
   }

@@ -11,6 +11,7 @@ import { AdminModule } from "./admin/admin.module";
 import { AnswerPromptsModule } from "./answer-prompts/answer-prompts.module";
 import { GamePlayersModule } from "./game-players/game-players.module";
 import { AnswerCategoriesModule } from "./answer-categories/answer-categories.module";
+import { GameEventsModule } from "./game-events/game-events.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AnswerCategoriesModule } from "./answer-categories/answer-categories.mo
     AnswerPromptsModule,
     GamePlayersModule,
     AnswerCategoriesModule,
+    GameEventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

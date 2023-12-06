@@ -5,6 +5,7 @@ import { AppRootState } from "~state/store";
 
 import {
   activeGamesEndpoint,
+  adminAllGamesEndpoint,
   allGamesEndpoint,
   gameplayEndpoint,
   pauseGameEndpoint,
@@ -12,9 +13,10 @@ import {
   startGameEndpoint,
 } from "./games.defs";
 
-import { GameStateDto, PlayerStateDto, PromptStateDto } from "~types";
+import { GameEndedDto, GameStateDto, PlayerStateDto, PromptStateDto } from "~types";
 
 const { get: getAllGames, post: createGame } = allGamesEndpoint;
+const { get: adminGetAllGames } = adminAllGamesEndpoint;
 const { get: getActiveGames } = activeGamesEndpoint;
 const { get: getGame } = showGameEndpoint;
 const { get: getGameplayState } = gameplayEndpoint;
@@ -31,6 +33,10 @@ export const gamesApi = baseApi.injectEndpoints({
       query: createGame.defaultQuery,
       transformResponse: createGame.transformer,
     }),
+    adminGetAllGames: adminGetAllGames.builder(build)({
+      query: adminGetAllGames.defaultQuery,
+      transformResponse: adminGetAllGames.transformer,
+    }),
     getActiveGames: getActiveGames.builder(build)({
       query: getActiveGames.defaultQuery,
       transformResponse: getActiveGames.transformer,
@@ -42,14 +48,25 @@ export const gamesApi = baseApi.injectEndpoints({
     getGameplayState: getGameplayState.builder(build)({
       query: getGameplayState.defaultQuery,
       transformResponse: getGameplayState.transformer,
-      async onCacheEntryAdded(_arg, { cacheDataLoaded, cacheEntryRemoved, dispatch, getState, updateCachedData }) {
+      async onCacheEntryAdded(
+        { urlParams: { id: gameId } },
+        { cacheDataLoaded, cacheEntryRemoved, dispatch, getState, updateCachedData }
+      ) {
         try {
           const {
             auth: { token },
           } = getState() as AppRootState;
           await cacheDataLoaded;
 
-          const ws = SocketSingleton.socket(token);
+          const ws = SocketSingleton.instance(token);
+
+          if (SocketSingleton.connected) {
+            ws.emit("join_game", { gameId });
+          } else {
+            ws.on("connection_established", () => {
+              ws.emit("join_game", { gameId });
+            });
+          }
 
           ws.on("game_state", (message: GameStateDto) => {
             updateCachedData((draft) => {
@@ -69,7 +86,10 @@ export const gamesApi = baseApi.injectEndpoints({
             });
           });
 
-          ws.on("game_ended", () => {
+          ws.on("game_ended", (message: GameEndedDto) => {
+            updateCachedData((draft) => {
+              Object.assign(draft, message);
+            });
             SocketSingleton.cleanup();
           });
 
@@ -102,6 +122,7 @@ export const gamesApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useAdminGetAllGamesQuery,
   useCreateGameMutation,
   useGetActiveGamesQuery,
   useGetAllGamesQuery,

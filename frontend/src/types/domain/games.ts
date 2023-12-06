@@ -72,3 +72,8 @@ export type SelectResponseDto = {
   roundNumber: number;
   responseIndex: number;
 };
+
+export type GameEndedDto = GameStateDto &
+  PlayerStateDto & {
+    status: "ended";
+  };

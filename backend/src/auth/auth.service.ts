@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<Omit<User, "saltedPassword"> | null> {
-    const user = await this.usersService.findOne({ email });
+    const user = await this.usersService.findOne({ email: email.toLowerCase() });
 
     if (user && (await bcrypt.compare(password, user.saltedPassword))) {
       // eslint-disable-next-line
@@ -27,7 +27,8 @@ export class AuthService {
   }
 
   async createAccount(createAccountDto: CreateAccountDto) {
-    const { email, nickname, password } = createAccountDto;
+    const { email: rawEmail, nickname, password } = createAccountDto;
+    const email = rawEmail.toLowerCase();
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await this.usersService.create({
@@ -48,7 +49,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id };
+    const payload = { email: user.email.toLowerCase(), sub: user.id };
 
     return {
       user,

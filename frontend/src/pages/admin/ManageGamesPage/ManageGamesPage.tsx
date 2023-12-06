@@ -1,64 +1,67 @@
-import FilterIcon from "@mui/icons-material/FilterAlt";
+import { useState } from "react";
+
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+import { format, parseISO } from "date-fns";
+
+import { useAdminGetAllGamesQuery } from "~api/request/games";
+import { GameEventsDialog } from "~components/GameEventsDialog";
+import { useAuth } from "~components/auth/AuthProvider";
 import { PageWrapper } from "~components/layout/PageWrapper";
 
+import { GameDto } from "~types";
+
 export default function ManageGamesPage() {
+  const { user } = useAuth();
+  const { data: allGames = [] } = useAdminGetAllGamesQuery();
+  const [selectedGame, setSelectedGame] = useState<GameDto>();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const handleReviewGame = (game: GameDto) => {
+    setSelectedGame(game);
+    setDialogOpen(true);
+  };
+
+  const getDisplayDate = (dateString: string) => {
+    const date = parseISO(dateString);
+    return format(date, "MMMM do, y - h:mm a");
+  };
+
   return (
     <PageWrapper nested pt={1} gap={1}>
-      <Stack direction="row" gap={1} ml="auto">
-        <IconButton>
-          <FilterIcon />
-        </IconButton>
-      </Stack>
-      <Card>
-        <CardHeader
-          title="bk11's Game"
-          subheader={
-            <Stack direction="row" justifyContent="space-between">
-              <Typography>ID: 185</Typography>
-              <Typography>October 10, 2023, 7:49 PM</Typography>
-            </Stack>
-          }
-        />
-      </Card>
-      <Card>
-        <CardHeader
-          title="bk11's Game"
-          subheader={
-            <Stack direction="row" justifyContent="space-between">
-              <Typography>ID: 185</Typography>
-              <Typography>October 10, 2023, 7:49 PM</Typography>
-            </Stack>
-          }
-        />
-      </Card>
-      <Card>
-        <CardHeader
-          title="bk11's Game"
-          subheader={
-            <Stack direction="row" justifyContent="space-between">
-              <Typography>ID: 185</Typography>
-              <Typography>October 10, 2023, 7:49 PM</Typography>
-            </Stack>
-          }
-        />
-      </Card>
-      <Card>
-        <CardHeader
-          title="bk11's Game"
-          subheader={
-            <Stack direction="row" justifyContent="space-between">
-              <Typography>ID: 185</Typography>
-              <Typography>October 10, 2023, 7:49 PM</Typography>
-            </Stack>
-          }
-        />
-      </Card>
+      <Typography variant="h5">Past Games</Typography>
+      {allGames.length === 0 ? (
+        <Typography>No active games</Typography>
+      ) : (
+        <>
+          {allGames.map((game) => (
+            <Card key={game.id}>
+              <CardHeader
+                title={user.id === game.createdById ? "My Game" : `${game.createdBy.nickname}'s Game`}
+                subheader={
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Typography>{getDisplayDate(game.createdAt)}</Typography>
+                    <Button size="small" onClick={() => handleReviewGame(game)}>
+                      Review
+                    </Button>
+                  </Stack>
+                }
+              />
+            </Card>
+          ))}
+        </>
+      )}
+      {selectedGame && (
+        <GameEventsDialog game={selectedGame} open={dialogOpen} onClose={closeDialog} key={selectedGame.id} />
+      )}
     </PageWrapper>
   );
 }
