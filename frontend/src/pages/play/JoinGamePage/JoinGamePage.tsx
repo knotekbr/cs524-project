@@ -10,7 +10,11 @@ import Typography from "@mui/material/Typography";
 import { format, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
-import { useLazyGetAllInvitesQuery } from "~api/request/game-invites";
+import {
+  useAcceptInviteMutation,
+  useDeclineInviteMutation,
+  useLazyGetAllInvitesQuery,
+} from "~api/request/game-invites";
 import { useLazyGetActiveGamesQuery } from "~api/request/games";
 import { useAuth } from "~components/auth/AuthProvider";
 import { PageWrapper } from "~components/layout/PageWrapper";
@@ -20,6 +24,8 @@ export default function JoinGamePage() {
   const { user } = useAuth();
   const [getActiveGames, { data: activeGames = [] }] = useLazyGetActiveGamesQuery();
   const [getInvites, { data: invites = [] }] = useLazyGetAllInvitesQuery();
+  const [acceptInvite] = useAcceptInviteMutation();
+  const [declineInvite] = useDeclineInviteMutation();
 
   useEffect(() => {
     getActiveGames();
@@ -29,6 +35,25 @@ export default function JoinGamePage() {
   const getDisplayDate = (dateString: string) => {
     const date = parseISO(dateString);
     return format(date, "MMMM do, y - h:mm a");
+  };
+
+  const handleAcceptInvite = (id: number) => {
+    acceptInvite({ urlParams: { id } })
+      .unwrap()
+      .then(() => {
+        getActiveGames();
+        getInvites();
+      })
+      .catch();
+  };
+
+  const handleDeclineInvite = (id: number) => {
+    declineInvite({ urlParams: { id } })
+      .unwrap()
+      .then(() => {
+        getInvites();
+      })
+      .catch();
   };
 
   return (
@@ -71,10 +96,10 @@ export default function JoinGamePage() {
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                       <Typography>{getDisplayDate(invite.createdAt)}</Typography>
                       <Box>
-                        <Button size="small" color="success">
+                        <Button size="small" color="success" onClick={() => handleAcceptInvite(invite.gameId)}>
                           Accept
                         </Button>
-                        <Button size="small" color="error">
+                        <Button size="small" color="error" onClick={() => handleDeclineInvite(invite.gameId)}>
                           Decline
                         </Button>
                       </Box>

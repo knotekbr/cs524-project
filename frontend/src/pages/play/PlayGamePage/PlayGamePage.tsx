@@ -93,6 +93,10 @@ export default function PlayGamePage() {
       setJoinedGame(true);
     }
 
+    if (false) {
+      leaveGame({ gameId });
+    }
+
     return () => {
       setJoinedGame(false);
     };
@@ -116,7 +120,6 @@ export default function PlayGamePage() {
   }
 
   const { currPhase } = gameplayState;
-  console.log(`Curr Phase: ${currPhase}`);
 
   if (currPhase === "lobby") {
     const { createdById } = gameplayState;

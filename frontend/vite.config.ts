@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd(), "REACT_APP_");
 
   return {
@@ -27,10 +27,18 @@ export default defineConfig(({ mode }) => {
         "~themes": path.resolve(__dirname, "./src/themes"),
       },
     },
-    define: {
-      "ENV.API_BASE_URL": JSON.stringify(env.REACT_APP_API_URL),
-      "ENV.WS_BASE_URL": JSON.stringify(env.REACT_APP_WS_URL),
-      "ENV.WS_PATH": JSON.stringify(env.REACT_APP_WS_PATH),
-    },
+    define:
+      command === "build"
+        ? {
+            "ENV.API_BASE_URL": JSON.stringify(env.REACT_APP_BUILD_API_URL),
+            "ENV.WS_BASE_URL": JSON.stringify(env.REACT_APP_BUILD_WS_URL),
+            "ENV.WS_PATH": JSON.stringify(env.REACT_APP_BUILD_WS_PATH),
+          }
+        : {
+            "ENV.API_BASE_URL": JSON.stringify(env.REACT_APP_API_URL),
+            "ENV.WS_BASE_URL": JSON.stringify(env.REACT_APP_WS_URL),
+            "ENV.WS_PATH": JSON.stringify(env.REACT_APP_WS_PATH),
+          },
+    base: command === "build" ? "/cs524" : undefined,
   };
 });

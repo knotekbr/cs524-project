@@ -11,9 +11,14 @@
     "db:generate": "yarn backend prisma generate",
     "db:seed": "yarn backend prisma db seed",
     "db:init": "yarn backend prisma migrate reset",
-    "dev": "concurrently \"yarn backend dev\" \"yarn frontend dev\""
+    "dev": "concurrently \"yarn backend dev\" \"yarn frontend dev\"",
+    "build": "yarn db:generate && yarn backend build",
+    "start": "yarn backend start:prod"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": "18.12"
   }
 }

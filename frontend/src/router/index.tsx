@@ -20,110 +20,113 @@ import { JoinGamePage } from "~pages/play/JoinGamePage";
 import { PlayBasePage } from "~pages/play/PlayBasePage";
 import { PlayGamePage } from "~pages/play/PlayGamePage";
 
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    children: [
-      {
-        errorElement: <ErrorPage />,
-        children: [
-          {
-            index: true,
-            element: <HomePage />,
-          },
+export const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <App />,
+      children: [
+        {
+          errorElement: <ErrorPage />,
+          children: [
+            {
+              index: true,
+              element: <HomePage />,
+            },
 
-          // Must be unauthenticated to access these routes
-          {
-            element: <RouteUnauthGuard />,
-            children: [
-              {
-                path: "login",
-                element: <LogInPage />,
-              },
-              {
-                path: "signup",
-                element: <SignUpPage />,
-              },
-            ],
-          },
+            // Must be unauthenticated to access these routes
+            {
+              element: <RouteUnauthGuard />,
+              children: [
+                {
+                  path: "login",
+                  element: <LogInPage />,
+                },
+                {
+                  path: "signup",
+                  element: <SignUpPage />,
+                },
+              ],
+            },
 
-          // Must be authenticated to access these routes
-          {
-            element: <RouteAuthGuard />,
-            children: [
-              {
-                path: "play",
-                element: <PlayBasePage />,
-                children: [
-                  {
-                    index: true,
-                    element: <Navigate to="new" />,
-                  },
-                  {
-                    path: "new",
-                    element: <CreateGamePage />,
-                  },
-                  {
-                    path: "join",
-                    element: <JoinGamePage />,
-                  },
-                ],
-              },
-              {
-                path: "play/:gameId",
-                element: <PlayGamePage />,
-              },
-              {
-                path: "history",
-                children: [
-                  {
-                    index: true,
-                    element: <HistoryLandingPage />,
-                  },
-                  {
-                    path: ":gameId",
-                    element: <ReviewGamePage />,
-                  },
-                ],
-              },
-              {
-                path: "settings",
-                element: <SettingsPage />,
-              },
-            ],
-          },
+            // Must be authenticated to access these routes
+            {
+              element: <RouteAuthGuard />,
+              children: [
+                {
+                  path: "play",
+                  element: <PlayBasePage />,
+                  children: [
+                    {
+                      index: true,
+                      element: <Navigate to="new" />,
+                    },
+                    {
+                      path: "new",
+                      element: <CreateGamePage />,
+                    },
+                    {
+                      path: "join",
+                      element: <JoinGamePage />,
+                    },
+                  ],
+                },
+                {
+                  path: "play/:gameId",
+                  element: <PlayGamePage />,
+                },
+                {
+                  path: "history",
+                  children: [
+                    {
+                      index: true,
+                      element: <HistoryLandingPage />,
+                    },
+                    {
+                      path: ":gameId",
+                      element: <ReviewGamePage />,
+                    },
+                  ],
+                },
+                {
+                  path: "settings",
+                  element: <SettingsPage />,
+                },
+              ],
+            },
 
-          // Must be an admin to access these routes
-          {
-            element: <RouteRoleGuard roles={["admin"]} />,
-            children: [
-              {
-                path: "admin",
-                element: <AdminBasePage />,
-                children: [
-                  {
-                    index: true,
-                    element: <Navigate to="questions" />,
-                  },
-                  {
-                    path: "questions",
-                    element: <ManageQuestionsPage />,
-                  },
-                  {
-                    path: "games",
-                    element: <ManageGamesPage />,
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            path: "*",
-            element: <NotFoundPage />,
-          },
-        ],
-      },
-    ],
-  },
-]);
+            // Must be an admin to access these routes
+            {
+              element: <RouteRoleGuard roles={["admin"]} />,
+              children: [
+                {
+                  path: "admin",
+                  element: <AdminBasePage />,
+                  children: [
+                    {
+                      index: true,
+                      element: <Navigate to="questions" />,
+                    },
+                    {
+                      path: "questions",
+                      element: <ManageQuestionsPage />,
+                    },
+                    {
+                      path: "games",
+                      element: <ManageGamesPage />,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: "*",
+              element: <NotFoundPage />,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  { basename: "/cs524" }
+);
