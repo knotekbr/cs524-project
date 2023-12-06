@@ -12,7 +12,7 @@ import {
   startGameEndpoint,
 } from "./games.defs";
 
-import { GameStateDto, PlayerStateDto, PromptStateDto } from "~types";
+import { GameEndedDto, GameStateDto, PlayerStateDto, PromptStateDto } from "~types";
 
 const { get: getAllGames, post: createGame } = allGamesEndpoint;
 const { get: getActiveGames } = activeGamesEndpoint;
@@ -80,7 +80,10 @@ export const gamesApi = baseApi.injectEndpoints({
             });
           });
 
-          ws.on("game_ended", () => {
+          ws.on("game_ended", (message: GameEndedDto) => {
+            updateCachedData((draft) => {
+              Object.assign(draft, message);
+            });
             SocketSingleton.cleanup();
           });
 
