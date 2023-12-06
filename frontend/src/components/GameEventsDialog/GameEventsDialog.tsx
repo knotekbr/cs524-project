@@ -1,13 +1,8 @@
 import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 
 import { format, parseISO } from "date-fns";
 
@@ -66,26 +61,6 @@ export default function GameEventsDialog({ game, onClose, open }: GameEventsDial
             </li>
           ))}
         </ol>
-        {/* <Stack gap={1}>
-          {gameEvents.map(({ associatedPlayer, eventDetails, eventType, timestamp }) => (
-            <Card key={`${eventType}${timestamp}`}>
-              <CardHeader
-                title={eventTypeMap[eventType]}
-                subheader={
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography>{associatedPlayer?.user.nickname || ""}</Typography>
-                    <Typography>{getDisplayDate(timestamp)}</Typography>
-                  </Stack>
-                }
-              />
-              {eventDetails && (
-                <CardContent>
-                  <Typography>{eventDetails}</Typography>
-                </CardContent>
-              )}
-            </Card>
-          ))}
-        </Stack> */}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
