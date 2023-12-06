@@ -11,7 +11,6 @@ import { AnswerCategoriesService } from "src/answer-categories/answer-categories
 import { AnswerCategory } from "@prisma/client";
 
 @Controller("answer-prompts")
-@Auth(Role.Admin)
 export class AnswerPromptsController {
   constructor(
     private answerPromptsService: AnswerPromptsService,
@@ -19,11 +18,13 @@ export class AnswerPromptsController {
   ) {}
 
   @Get()
+  @Auth(Role.Admin)
   async getAllPrompts() {
     return this.answerPromptsService.findMany({});
   }
 
   @Post("upload")
+  @Auth(Role.Admin)
   @UseInterceptors(FileInterceptor("file", {}))
   async uploadCsv(@UploadedFile() file: Express.Multer.File) {
     const fileStream = Readable.from(file.buffer);
