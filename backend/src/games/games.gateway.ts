@@ -192,7 +192,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
         session.activeClientStates.delete(client.id);
 
         if (session.activeClientStates.size === 0) {
-          await this.endGame(gameId, session, "All players left");
+          await this.endGame(gameId, session, "Game ended because all players left");
         } else {
           const playerStateMessage = this.getPlayerStateMessage(session);
           this.server.to(gameIdStr).emit("player_state", playerStateMessage);
@@ -331,7 +331,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
 
     if (!prompt) {
-      this.endGame(game.id, session, "Unable to find a prompt");
+      this.endGame(game.id, session, "Game ended because a new prompt could not be found");
       return;
     }
 
@@ -355,6 +355,19 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
       responses,
       value: prompt.difficulty * 200,
     };
+
+    await this.gamesService.update({
+      where: { id: game.id },
+      data: {
+        events: {
+          create: {
+            eventType: "answer_chosen",
+            userId: user.id,
+            eventDetails: `${user.nickname} chose prompt '${prompt.prompt}' in category ${category.categoryName}`,
+          },
+        },
+      },
+    });
 
     await this.gamePhaseTransition(game.id, session, "answers");
   }
@@ -382,8 +395,47 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
     playerState.responseChosen = true;
     if (responseIndex === session.promptState.correctResponseIndex) {
       playerState.score += session.promptState.value;
+
+      await this.gamesService.update({
+        where: { id: game.id },
+        data: {
+          events: {
+            create: {
+              eventType: "response_chosen",
+              userId: user.id,
+              eventDetails: `${user.nickname} chose the correct response (${session.promptState.responses[responseIndex]}) and earned $${session.promptState.value}`,
+            },
+          },
+        },
+      });
     } else if (responseIndex !== 4) {
       playerState.score -= session.promptState.value;
+
+      await this.gamesService.update({
+        where: { id: game.id },
+        data: {
+          events: {
+            create: {
+              eventType: "response_chosen",
+              userId: user.id,
+              eventDetails: `${user.nickname} chose an incorrect response (${session.promptState.responses[responseIndex]}) and lost $${session.promptState.value}`,
+            },
+          },
+        },
+      });
+    } else {
+      await this.gamesService.update({
+        where: { id: game.id },
+        data: {
+          events: {
+            create: {
+              eventType: "response_chosen",
+              userId: user.id,
+              eventDetails: `${user.nickname} didn't know the answer and their score didn't change`,
+            },
+          },
+        },
+      });
     }
 
     const allActiveClients = [...session.activeClientStates.values()];
@@ -495,7 +547,7 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     if (toPhase === "prompts") {
       if (session.promptsRemaining === 0) {
-        await this.endGame(gameId, session, "No prompts remaining");
+        await this.endGame(gameId, session, "Game ended because all prompts have been answered");
         return;
       }
 
@@ -505,13 +557,29 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       const currPlayerId = this.getCurrentPlayerId(session);
       if (currPlayerId === null) {
-        this.endGame(gameId, session, "All players left");
+        this.endGame(gameId, session, "Game ended because all players left");
         return;
       }
 
       session.currPlayerId = currPlayerId;
       if (session.currPhase === "answers") {
-        session.allClientStates.forEach((value) => {
+        session.allClientStates.forEach(async (value) => {
+          if (!value.responseChosen) {
+            value.score -= session.promptState.value;
+
+            await this.gamesService.update({
+              where: { id: gameId },
+              data: {
+                events: {
+                  create: {
+                    eventType: "response_chosen",
+                    userId: value.id,
+                    eventDetails: `${value.nickname} did not choose a response and lost $${session.promptState.value}`,
+                  },
+                },
+              },
+            });
+          }
           value.responseChosen = false;
         });
         session.currRound++;
