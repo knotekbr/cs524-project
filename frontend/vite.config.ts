@@ -11,7 +11,7 @@ export default defineConfig(({ mode, command }) => {
   return {
     plugins: [react(), viteTsConfigPaths()],
     server: {
-      open: true,
+      open: "http://localhost:4200/cs524",
       port: 4200,
     },
     resolve: {

@@ -15,7 +15,7 @@ import { TimeRemaining } from "~components/game/TimeRemaining";
 import { PageWrapper } from "~components/layout/PageWrapper";
 import { useAppSelector } from "~hooks/state";
 
-import type { InvitePlayerDto, JoinGameDto, LeaveGameDto, SelectPromptDto, SelectResponseDto } from "~types";
+import type { InvitePlayerDto, LeaveGameDto, SelectPromptDto, SelectResponseDto } from "~types";
 
 const PlayerRow = styled(Stack)(({ theme }) => ({
   flexDirection: "row",
@@ -39,26 +39,22 @@ const MultipleChoiceAnswer = styled(Stack)(({ theme }) => ({
 
 export default function PlayGamePage() {
   const { user } = useAuth();
-  const { gameId: gameIdStr } = useParams();
-  const [joinedGame, setJoinedGame] = useState(false);
-  const [responseChosen, setResponseChosen] = useState(-1);
-  const gameId = useMemo(() => parseInt(gameIdStr || "0", 10) || 0, [gameIdStr]);
+  const token = useAppSelector((state) => state.auth.token);
 
+  const { gameId: gameIdStr } = useParams();
+  const gameId = useMemo(() => parseInt(gameIdStr || "0", 10) || 0, [gameIdStr]);
   const { data: gameplayState, isLoading: gameplayStateLoading } = useGetGameplayStateQuery({
     urlParams: { id: gameId },
   });
-  const token = useAppSelector((state) => state.auth.token);
+
+  const [responseChosen, setResponseChosen] = useState(-1);
 
   const gameBoardRef = useRef<HTMLDivElement | null>(null);
-  const [gameBoardHeight, setGameBoardHeight] = useState(300);
-  // Placeholder to easily switch between game board and multiple choice input
-  const [answerMode, setAnswerMode] = useState(false);
+  const [gameBoardHeight, setGameBoardHeight] = useState<number | undefined>();
 
-  const ws = useMemo(() => SocketSingleton.socket(token), []);
+  const ws = useMemo(() => SocketSingleton.instance(token), []);
 
-  const joinGame = (message: JoinGameDto) => {
-    ws.emit("join_game", message);
-  };
+  const { currPhase } = gameplayState || { currPhase: "lobby" };
 
   const leaveGame = (message: LeaveGameDto) => {
     ws.emit("leave_game", message);
@@ -84,32 +80,23 @@ export default function PlayGamePage() {
   };
 
   useEffect(() => {
-    if (gameplayStateLoading || !ws.connected || joinedGame) {
+    if (gameplayStateLoading) {
       return () => {};
     }
 
-    if (!joinedGame) {
-      joinGame({ gameId });
-      setJoinedGame(true);
-    }
-
-    if (false) {
-      leaveGame({ gameId });
-    }
-
     return () => {
-      setJoinedGame(false);
+      leaveGame({ gameId });
     };
-  }, [gameplayStateLoading, ws.connected]);
+  }, [gameplayStateLoading]);
 
   useEffect(() => {
-    if (!gameBoardRef.current) {
+    if (currPhase !== "prompts" || gameBoardHeight !== undefined || !gameBoardRef.current) {
       return;
     }
 
     const boardElemHeight = gameBoardRef.current.getBoundingClientRect().height;
     setGameBoardHeight(boardElemHeight);
-  }, []);
+  }, [currPhase]);
 
   if (!gameplayState) {
     return (
@@ -118,8 +105,6 @@ export default function PlayGamePage() {
       </PageWrapper>
     );
   }
-
-  const { currPhase } = gameplayState;
 
   if (currPhase === "lobby") {
     const { createdById } = gameplayState;
@@ -161,7 +146,7 @@ export default function PlayGamePage() {
             gameBoardRef={gameBoardRef}
           />
           <Stack flex={1} textAlign="center" gap={1}>
-            <Stack flex={1} bgcolor="primary.main" p={1} onClick={() => setAnswerMode(!answerMode)}>
+            <Stack flex={1} bgcolor="primary.main" p={1}>
               <Typography variant="categoryName">Players</Typography>
               {players.map((player) => (
                 <PlayerRow key={player.id}>
@@ -255,7 +240,18 @@ export default function PlayGamePage() {
                   <Typography variant="categoryName">Time Remaining</Typography>
                   <TimeRemaining timeUpDateString={phaseTimeUp} />
                 </Stack>
-                <Stack flex={1} justifyContent="center" alignItems="center" textAlign="center" bgcolor="primary.main">
+                <Stack
+                  flex={1}
+                  justifyContent="center"
+                  alignItems="center"
+                  textAlign="center"
+                  bgcolor="primary.main"
+                  onClick={() => selectResponse({ responseIndex: 4, roundNumber: currRound })}
+                  style={{
+                    cursor: responseChosen === -1 ? "pointer" : undefined,
+                    opacity: responseChosen !== -1 && responseChosen !== 4 ? 0.5 : undefined,
+                  }}
+                >
                   <Typography variant="categoryName">I don&apos;t know</Typography>
                 </Stack>
               </Stack>
@@ -268,7 +264,7 @@ export default function PlayGamePage() {
 
   if (currPhase === "results") {
     const { players } = gameplayState;
-    const sortedPlayers = players.sort((a, b) => a.score - b.score);
+    const sortedPlayers = [...players].sort((a, b) => a.score - b.score);
 
     return (
       <PageWrapper>

@@ -3,7 +3,11 @@ import { Socket, io } from "socket.io-client";
 class SocketWrapper {
   private ws: Socket | null = null;
 
-  socket(token: string): Socket {
+  get connected(): boolean {
+    return this.ws?.connected || false;
+  }
+
+  instance(token: string): Socket {
     if (this.ws !== null) {
       if (this.ws.disconnected) {
         this.ws.connect();

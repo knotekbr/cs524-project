@@ -42,14 +42,25 @@ export const gamesApi = baseApi.injectEndpoints({
     getGameplayState: getGameplayState.builder(build)({
       query: getGameplayState.defaultQuery,
       transformResponse: getGameplayState.transformer,
-      async onCacheEntryAdded(_arg, { cacheDataLoaded, cacheEntryRemoved, dispatch, getState, updateCachedData }) {
+      async onCacheEntryAdded(
+        { urlParams: { id: gameId } },
+        { cacheDataLoaded, cacheEntryRemoved, dispatch, getState, updateCachedData }
+      ) {
         try {
           const {
             auth: { token },
           } = getState() as AppRootState;
           await cacheDataLoaded;
 
-          const ws = SocketSingleton.socket(token);
+          const ws = SocketSingleton.instance(token);
+
+          if (SocketSingleton.connected) {
+            ws.emit("join_game", { gameId });
+          } else {
+            ws.on("connection_established", () => {
+              ws.emit("join_game", { gameId });
+            });
+          }
 
           ws.on("game_state", (message: GameStateDto) => {
             updateCachedData((draft) => {

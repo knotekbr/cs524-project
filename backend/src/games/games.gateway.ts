@@ -30,6 +30,7 @@ import { add } from "date-fns";
 import { SelectPromptDto } from "./dtos/selectPromptDto";
 import { PromptStateDto } from "./dtos/promptStateDto";
 import { SelectResponseDto } from "./dtos/selectResponseDto";
+import { GameEndedDto } from "./dtos/GameEndedDto";
 
 @WebSocketGateway({
   cors: {
@@ -72,6 +73,8 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     if (user.activeGameId) {
       this.joinGame(client, { gameId: user.activeGameId });
+    } else {
+      client.emit("connection_established");
     }
   }
 
@@ -202,14 +205,16 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage("invite_player")
   async invitePlayer(@ConnectedSocket() client: Socket, @MessageBody() message: InvitePlayerDto) {
-    const { email } = message;
+    const { email: rawEmail } = message;
+    const email = rawEmail.toLowerCase();
+
     const [user, game] = await this.getUserAndGameFromClient(client);
 
     if (!user || !game || user.id !== game.createdById) {
       this.emitError(client, "Unable to invite player");
       return;
     }
-    if (email === user.email) {
+    if (email === user.email.toLowerCase()) {
       this.emitError(client, "You can't invite yourself");
       return;
     }
@@ -377,6 +382,8 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
     playerState.responseChosen = true;
     if (responseIndex === session.promptState.correctResponseIndex) {
       playerState.score += session.promptState.value;
+    } else if (responseIndex !== 4) {
+      playerState.score -= session.promptState.value;
     }
 
     const allActiveClients = [...session.activeClientStates.values()];
@@ -413,6 +420,17 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
       phaseTimeUp,
       prompt: { category, prompt, responses, value },
       currPhase,
+    };
+  }
+
+  getGameEndedMessage(session: GameSession): GameEndedDto {
+    const gameStateMessage = this.getGameStateMessage(session);
+    const playerStateMessage = this.getPlayerStateMessage(session);
+
+    return {
+      ...gameStateMessage,
+      ...playerStateMessage,
+      status: "ended",
     };
   }
 
@@ -526,14 +544,15 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async endGame(gameId: number, session: GameSession, eventDetails?: string) {
     session.currPhase = "results";
 
-    const playerStateMessage = this.getPlayerStateMessage(session);
-    const gameStateMessage = this.getGameStateMessage(session);
+    const gameEndedMessage = this.getGameEndedMessage(session);
     const gameIdStr = gameId.toString();
 
-    this.server.to(gameIdStr).emit("player_state", playerStateMessage);
-    this.server.to(gameIdStr).emit("game_state", { ...gameStateMessage, status: "ended" });
-    this.server.to(gameIdStr).emit("game_ended");
-    this.server.to(gameIdStr).disconnectSockets(true);
+    this.server.to(gameIdStr).emit("game_ended", gameEndedMessage);
+
+    setTimeout(() => {
+      this.server.to(gameIdStr).disconnectSockets(true);
+      this.gameSessions.delete(gameId);
+    }, 10000);
 
     await this.gamesService.update({
       where: { id: gameId },
@@ -547,7 +566,5 @@ export class GamesGateway implements OnGatewayConnection, OnGatewayDisconnect {
         },
       },
     });
-
-    this.gameSessions.delete(gameId);
   }
 }
